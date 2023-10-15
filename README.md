@@ -1,6 +1,5 @@
 ##WELCOME
-This repository contains my code for the FTC Centerstage Season
 
-All of the code contained is fully open-sourced
+This repository contains code for the 2023 Centerstage Season
 
-I implemented a roadrunner repo and FTClibs for a PID Controller
+It is for FTC team 17155
