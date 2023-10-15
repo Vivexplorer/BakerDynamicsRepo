@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@Autonomous
+@Autonomous(name = "PID ARM TUNING")
 
 public class PIDF_Arm_Tuning extends LinearOpMode {
     private PIDController controller;
