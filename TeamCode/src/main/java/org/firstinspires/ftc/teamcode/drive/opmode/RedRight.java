@@ -120,7 +120,7 @@ public class RedRight extends LinearOpMode {
         }
         if (locationOfProp == 2) {
             drive.followTrajectory(traj2);
-            //drive.followTrajectorySequence(traj12);
+            //drive.followTrajectorySequence(traj12);yessir
 
         }
         if (locationOfProp == 3) {
