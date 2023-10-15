@@ -20,7 +20,9 @@ public class PIDF_Arm_Tuning extends LinearOpMode {
 
     private final double ticks_in_degrees = 0;
 
-    private DcMotorEx arm_motor;
+    private DcMotorEx arm_motor_left;
+
+    private DcMotorEx arm_motor_right;
 
     @Override
     public void runOpMode() {
@@ -28,18 +30,19 @@ public class PIDF_Arm_Tuning extends LinearOpMode {
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        arm_motor = hardwareMap.get(DcMotorEx.class, "lift_motor");
+        arm_motor_left = hardwareMap.get(DcMotorEx.class, "lift_motor");
         waitForStart();
 
         while (opModeIsActive()) {
             controller.setPID(p, i, d);
-            int armPos = arm_motor.getCurrentPosition();
+            int armPos = (arm_motor_left.getCurrentPosition()+ arm_motor_right.getCurrentPosition()) / 2;
             double pid = controller.calculate(armPos, target);
             double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
             double power = pid + ff;
 
-            arm_motor.setPower(power);
+            arm_motor_left.setPower(power);
+            arm_motor_right.setPower(power);
 
             telemetry.addData("pos", armPos);
             telemetry.addData("target", target);
