@@ -101,7 +101,7 @@ public class RedRight extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
-        int target = 100;
+        //int target = 100;
 
         sleep(5000);
         getLocationOfProp();
@@ -120,7 +120,7 @@ public class RedRight extends LinearOpMode {
         }
         if (locationOfProp == 2) {
             drive.followTrajectory(traj2);
-            drive.followTrajectorySequence(traj12);
+            //drive.followTrajectorySequence(traj12);
 
         }
         if (locationOfProp == 3) {
