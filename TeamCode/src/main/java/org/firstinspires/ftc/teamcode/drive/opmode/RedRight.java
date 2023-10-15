@@ -108,7 +108,7 @@ public class RedRight extends LinearOpMode {
 
 
 
-        //lift the lift motor
+        //lift the arm
         //drop servo
 
 
