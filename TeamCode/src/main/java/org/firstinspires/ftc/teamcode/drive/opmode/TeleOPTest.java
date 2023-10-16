@@ -17,20 +17,25 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TeleOPTest extends OpMode {
     private PIDController controller;
 
-    public static double p = 0.02, i = 0, d=0.0001;
+    public static double p = 0.02, i = 0, d=0.002;
     public static double f = 0.3;
 
     public static int target = 0;
+
+    public static double MOTOR_POWERS = 0.6;
 
     private final double ticks_in_degrees = 22.4;
 
     private DcMotorEx lift_motor_left;
     private DcMotorEx lift_motor_right;
+
+    SampleMecanumDrive drive ;
     @Override
     public void init() {
+         drive = new SampleMecanumDrive(hardwareMap);
+
         lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         controller = new PIDController(p, i, d);
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -63,10 +68,19 @@ public class TeleOPTest extends OpMode {
 
         if (gamepad1.a) {
             lift_up();
-        }
-        if (gamepad1.y) {
+        }else if (gamepad1.y) {
             lift_neutral();
+        }else {
+            target = 0;
         }
+
+        if (gamepad1.left_stick_y>=0) {
+            drive.setMotorPowers(MOTOR_POWERS,MOTOR_POWERS,MOTOR_POWERS,MOTOR_POWERS);
+        }
+        if (gamepad1.left_stick_y<0) {
+            drive.setMotorPowers(-MOTOR_POWERS,-MOTOR_POWERS,-MOTOR_POWERS,-MOTOR_POWERS);
+        }
+
 
     }
     public void lift_up() {
