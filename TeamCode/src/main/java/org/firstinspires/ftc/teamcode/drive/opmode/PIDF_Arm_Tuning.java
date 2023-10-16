@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class PIDF_Arm_Tuning extends LinearOpMode {
     private PIDController controller;
 
+    public double power;
+
     public static double p=0, i = 0, d=0;
     public static double f = 0;
 
@@ -39,8 +41,15 @@ public class PIDF_Arm_Tuning extends LinearOpMode {
             int armPos = arm_motor_left.getCurrentPosition();
             double pid = controller.calculate(armPos, target);
             double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+            
+            if (pid<0) {
+                double power = pid;
+            }
+            if (pid>=0){
+                double power = pid + ff;
+            }
 
-            double power = pid + ff;
+            
 
             arm_motor_left.setPower(power);
             arm_motor_right.setPower(power);
