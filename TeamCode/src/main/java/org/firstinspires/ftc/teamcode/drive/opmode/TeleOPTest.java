@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -30,6 +31,9 @@ public class TeleOPTest extends OpMode {
     private DcMotorEx lift_motor_left;
     private DcMotorEx lift_motor_right;
 
+    private Servo left_intake;
+    private Servo right_intake;
+
     private DcMotorEx intake;
 
     SampleMecanumDrive drive ;
@@ -39,6 +43,9 @@ public class TeleOPTest extends OpMode {
 
         lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
+
+        left_intake = hardwareMap.get(Servo.class, "left_intake");
+        right_intake = hardwareMap.get(Servo.class, "right_intake");
 
         controller = new PIDController(p, i, d);
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -76,16 +83,22 @@ public class TeleOPTest extends OpMode {
         telemetry.addData("target", target);
         telemetry.update();
 
-        if (gamepad1.a) {
+        if (gamepad2.a) {
             lift_up();
-        }else if (gamepad1.y) {
+        }else if (gamepad2.y) {
             lift_neutral();
         }
 
-        if (gamepad1.x) {
+        if (gamepad2.x) {
             intake.setPower(-1.0);
         }else{
             intake.setPower(0);
+        }
+
+        if (gamepad2.dpadUp) {
+            intake_up();
+        }else if (gamepad2.dpadDown) {
+            intake_down();
         }
 
 
@@ -115,5 +128,14 @@ public class TeleOPTest extends OpMode {
     }
     public void lift_neutral() {
         target = 20;
+    }
+
+    public void intake_up() {
+        left_intake.setPosition(0.7);
+        right_intake.setPosition(0.7)
+    }
+    public void intake_down() {
+        left_intake.setPosition(0);
+        right_intake.setPosition(0);
     }
 }
