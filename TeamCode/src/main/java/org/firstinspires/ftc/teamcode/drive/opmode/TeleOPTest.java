@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -22,12 +23,14 @@ public class TeleOPTest extends OpMode {
 
     public static int target = 0;
 
-    public static double MOTOR_POWERS = 0.6;
+    public static double MOTOR_POWERS;
 
     private final double ticks_in_degrees = 22.4;
 
     private DcMotorEx lift_motor_left;
     private DcMotorEx lift_motor_right;
+
+    private DcMotorEx intake;
 
     SampleMecanumDrive drive ;
     @Override
@@ -44,6 +47,8 @@ public class TeleOPTest extends OpMode {
 
         lift_motor_left.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
+
 
 
 
@@ -51,6 +56,11 @@ public class TeleOPTest extends OpMode {
     }
     @Override
     public void loop() {
+        if (gamepad1.b) {
+            MOTOR_POWERS = -0.7;
+        }else {
+            MOTOR_POWERS = -0.5;
+        }
         controller.setPID(p, i, d);
 
         int armPos = lift_motor_left.getCurrentPosition();
@@ -70,15 +80,32 @@ public class TeleOPTest extends OpMode {
             lift_up();
         }else if (gamepad1.y) {
             lift_neutral();
-        }else {
-            target = 0;
         }
 
-        if (gamepad1.left_stick_y>=0) {
-            drive.setMotorPowers(MOTOR_POWERS,MOTOR_POWERS,MOTOR_POWERS,MOTOR_POWERS);
+        if (gamepad1.x) {
+            intake.setPower(-1.0);
+        }else{
+            intake.setPower(0);
         }
-        if (gamepad1.left_stick_y<0) {
-            drive.setMotorPowers(-MOTOR_POWERS,-MOTOR_POWERS,-MOTOR_POWERS,-MOTOR_POWERS);
+
+
+
+
+        if (gamepad1.left_stick_y>0) {
+            drive.setMotorPowers(MOTOR_POWERS,MOTOR_POWERS,MOTOR_POWERS,MOTOR_POWERS);//forward
+        }else if (gamepad1.left_stick_y<0) {
+            drive.setMotorPowers(-MOTOR_POWERS,-MOTOR_POWERS,-MOTOR_POWERS,-MOTOR_POWERS);//backward
+        }else if (gamepad1.left_stick_x>0) {
+            drive.setMotorPowers(-MOTOR_POWERS, -MOTOR_POWERS, MOTOR_POWERS, MOTOR_POWERS);
+        }else if(gamepad1.left_stick_x<0) {
+            drive.setMotorPowers(MOTOR_POWERS, MOTOR_POWERS, -MOTOR_POWERS, -MOTOR_POWERS);
+        }else if (gamepad1.right_stick_x>0) {
+            drive.setMotorPowers(-MOTOR_POWERS,MOTOR_POWERS,-MOTOR_POWERS,MOTOR_POWERS);
+        }else if (gamepad1.right_stick_x<0) {
+            drive.setMotorPowers(MOTOR_POWERS,-MOTOR_POWERS,MOTOR_POWERS,-MOTOR_POWERS);
+        }
+        else {
+            drive.setMotorPowers(0,0,0,0);
         }
 
 
