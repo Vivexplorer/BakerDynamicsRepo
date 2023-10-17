@@ -95,9 +95,9 @@ public class TeleOPTest extends OpMode {
             intake.setPower(0);
         }
 
-        if (gamepad2.dpadUp) {
+        if (gamepad2.dpad_up) {
             intake_up();
-        }else if (gamepad2.dpadDown) {
+        }else if (gamepad2.dpad_down) {
             intake_down();
         }
 
@@ -132,7 +132,7 @@ public class TeleOPTest extends OpMode {
 
     public void intake_up() {
         left_intake.setPosition(0.7);
-        right_intake.setPosition(0.7)
+        right_intake.setPosition(0.7);
     }
     public void intake_down() {
         left_intake.setPosition(0);
