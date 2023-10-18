@@ -10,6 +10,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -58,6 +59,10 @@ public class RedRight extends LinearOpMode {
 
     private DcMotorEx arm_motor;
 
+    private Servo leftintake;
+
+    private Servo rightintake;
+
 
     @Override
     public void runOpMode() {
@@ -67,6 +72,9 @@ public class RedRight extends LinearOpMode {
 
         arm_motor = hardwareMap.get(DcMotorEx.class, "lift_motor");
 
+        leftintake = hardwareMap.get(Servo.class,"left_intake");
+        rightintake = hardwareMap.get(Servo.class, "right_intake");
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
 
@@ -75,7 +83,15 @@ public class RedRight extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                        .splineToConstantHeading(new Vector2d(4, -39), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(4, -39), Math.toRadians(47))
+                        .addTemporalMarker(0.1, () -> {
+                            target = 20;
+                        })
+                        .addDisplacementMarker(1, () -> {
+                            rightintake.setPosition(0);
+                            leftintake.setPosition(0);
+                        }
+                        
                                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
@@ -89,6 +105,9 @@ public class RedRight extends LinearOpMode {
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj1.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(48,-29),0)
+                .addTemporalMarker(1, () -> {
+                        target = 235;
+                 })
                     .build();
 
 
@@ -116,11 +135,13 @@ public class RedRight extends LinearOpMode {
 
         if (locationOfProp == 1) {
             drive.followTrajectory(traj1);
-            //drive.followTrajectorySequence(traj4);
+            drive.followTrajectorySequence(traj4);
+            
         }
         if (locationOfProp == 2) {
             drive.followTrajectory(traj2);
             drive.followTrajectorySequence(traj12);
+            
 
         }
         if (locationOfProp == 3) {
