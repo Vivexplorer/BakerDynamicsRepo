@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TeleOPTest extends OpMode {
     private PIDController controller;
 
-    public static double p = 0.02, i = 0, d=0.002;
+    public static double p = 0.0144, i = 0, d=0.0032;
     public static double f = 0.3;
 
     public static int target = 0;
@@ -66,9 +66,9 @@ public class TeleOPTest extends OpMode {
     @Override
     public void loop() {
         if (gamepad2.b) {
-            MOTOR_POWERS = -0.7;
+            MOTOR_POWERS = 0.5;
         }else {
-            MOTOR_POWERS = -0.5;
+            MOTOR_POWERS = 0.3;
         }
         controller.setPID(p, i, d);
 
@@ -126,7 +126,7 @@ public class TeleOPTest extends OpMode {
 
     }
     public void lift_up() {
-        target = 235;
+        target = 210;
     }
     public void lift_neutral() {
         target = 20;
@@ -137,7 +137,7 @@ public class TeleOPTest extends OpMode {
         right_intake.setPosition(0.6);
     }
     public void intake_down() {
-        left_intake.setPosition(0.2);
-        right_intake.setPosition(0.2);
+        left_intake.setPosition(1);
+        right_intake.setPosition(1);
     }
 }
