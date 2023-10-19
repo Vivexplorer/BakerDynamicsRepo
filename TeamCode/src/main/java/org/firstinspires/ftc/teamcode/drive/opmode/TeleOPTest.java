@@ -47,6 +47,8 @@ public class TeleOPTest extends OpMode {
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
 
+        right_intake.setDirection(Servo.Direction.REVERSE);
+
         controller = new PIDController(p, i, d);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -131,11 +133,11 @@ public class TeleOPTest extends OpMode {
     }
 
     public void intake_up() {
-        left_intake.setPosition(0.7);
-        right_intake.setPosition(0.7);
+        left_intake.setPosition(0.6);
+        right_intake.setPosition(0.6);
     }
     public void intake_down() {
-        left_intake.setPosition(0);
-        right_intake.setPosition(0);
+        left_intake.setPosition(0.2);
+        right_intake.setPosition(0.2);
     }
 }
