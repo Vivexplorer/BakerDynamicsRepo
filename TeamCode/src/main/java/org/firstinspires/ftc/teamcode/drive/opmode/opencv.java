@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,8 +22,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
+@Config
 
-@Autonomous(name = "OpenCV Testing")
+@Autonomous(group = "drive", name = "OpenCV Testing")
 
 public class opencv extends LinearOpMode {
 
@@ -40,6 +42,17 @@ public class opencv extends LinearOpMode {
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
     public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
 
+    public static int lowH = 10;
+
+    public static int lowS = 100;
+
+    public static int lowV = 100;
+
+    public static int highH = 50;
+
+    public static int highS = 255;
+
+    public static int highV = 255;
 
     @Override
     public void runOpMode() {
@@ -127,8 +140,8 @@ public class opencv extends LinearOpMode {
             Mat hsvFrame = new Mat();
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
-            Scalar lowerYellow = new Scalar(173, 216, 230);
-            Scalar upperYellow = new Scalar(240, 100, 100);
+            Scalar lowerYellow = new Scalar(lowH, lowS, lowV);
+            Scalar upperYellow = new Scalar(highH, highS, highV);
 
 
             Mat yellowMask = new Mat();

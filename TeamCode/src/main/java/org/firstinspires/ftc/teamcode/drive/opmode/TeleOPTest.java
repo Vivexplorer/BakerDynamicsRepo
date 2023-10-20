@@ -66,9 +66,9 @@ public class TeleOPTest extends OpMode {
     @Override
     public void loop() {
         if (gamepad2.b) {
-            MOTOR_POWERS = 0.5;
+            MOTOR_POWERS = 0.7;
         }else {
-            MOTOR_POWERS = 0.3;
+            MOTOR_POWERS = 0.5;
         }
         controller.setPID(p, i, d);
 
