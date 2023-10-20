@@ -56,7 +56,9 @@ public class RedRight extends LinearOpMode {
 
     private final double ticks_in_degrees = 0;
 
-    private DcMotorEx arm_motor;
+    private DcMotorEx lift_left;
+
+    private DcMotorEx lift_right;
 
 
     @Override
@@ -65,7 +67,8 @@ public class RedRight extends LinearOpMode {
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        arm_motor = hardwareMap.get(DcMotorEx.class, "lift_motor");
+        lift_left = hardwareMap.get(DcMotorEx.class, "lift_left");
+        lift_right = hardwareMap.get(DcMotorEx.class, "lift_right");
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -129,13 +132,14 @@ public class RedRight extends LinearOpMode {
 
         while (opModeIsActive()) {
             controller.setPID(p, i, d);
-            int armPos = arm_motor.getCurrentPosition();
+            int armPos = lift_left.getCurrentPosition();
             double pid = controller.calculate(armPos, target);
             double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
             double power = pid + ff;
 
-            arm_motor.setPower(power);
+            lift_right.setPower(power);
+            lift_left.setPower(power);
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
             telemetry.addData("Distance in Inch", (getDistance(width)));
             telemetry.addData("Location of Prop", locationOfProp);
