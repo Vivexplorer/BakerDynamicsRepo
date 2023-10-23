@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -35,6 +36,8 @@ public class TeleOPTest extends OpMode {
     private Servo right_intake;
 
     private DcMotorEx intake;
+
+    public static ElapsedTime elapsedTime;
 
     SampleMecanumDrive drive ;
     @Override
@@ -97,11 +100,18 @@ public class TeleOPTest extends OpMode {
             intake.setPower(0);
         }
 
-        if (gamepad2.dpad_up) {
+        if (gamepad2.dpad_left) {
             intake_up();
-        }else if (gamepad2.dpad_down) {
+        }else if (gamepad2.dpad_right) {
             intake_down();
         }
+
+        if (gamepad2.dpad_up) {
+            target += (Math.floor(elapsedTime.seconds())  * 10);
+        }else if(gamepad2.dpad_down) {
+            target -= (Math.floor(elapsedTime.seconds())  * 10);
+        }
+        elapsedTime.reset();
 
 
 
@@ -129,7 +139,7 @@ public class TeleOPTest extends OpMode {
         target = 210;
     }
     public void lift_neutral() {
-        target = 20;
+        target = 10;
     }
 
     public void intake_up() {

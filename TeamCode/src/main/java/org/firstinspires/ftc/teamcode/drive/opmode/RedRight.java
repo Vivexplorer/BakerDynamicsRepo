@@ -10,6 +10,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -49,20 +51,27 @@ public class RedRight extends LinearOpMode {
 
     private PIDController controller;
 
-    public static double p=0.0005, i = 0, d=0;
-    public static double f = 0;
+    public static double p = 0.0154, i = 0.001, d=0.0028;
+    public static double f = 0.3;
 
     public static int target = 0;
 
-    private final double ticks_in_degrees = 0;
+    private final double ticks_in_degrees = 22.5;
 
     private DcMotorEx lift_left;
 
     private DcMotorEx lift_right;
 
+    private Servo left_intake;
+
+    private Servo right_intake;
+
 
     @Override
     public void runOpMode() {
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
 
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -70,7 +79,14 @@ public class RedRight extends LinearOpMode {
         lift_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         lift_right = hardwareMap.get(DcMotorEx.class, "lift_right");
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        left_intake = hardwareMap.get(Servo.class, "left_intake");
+        right_intake = hardwareMap.get(Servo.class, "right_intake");
+
+        right_intake.setDirection(Servo.Direction.REVERSE);
+
+        lift_left.setDirection(DcMotorEx.Direction.REVERSE);
+
+
 
 
         Pose2d startPose = new Pose2d(12,-60, Math.toRadians(90));
@@ -78,7 +94,12 @@ public class RedRight extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                        .splineToConstantHeading(new Vector2d(4, -39), Math.toRadians(90))
+                        .splineTo(new Vector2d(4, -33), Math.toRadians(108))
+
+                .addTemporalMarker(0.5,0.1, () -> {
+                    right_intake.setPosition(1);
+                    left_intake.setPosition(1);
+                })
                                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
@@ -92,11 +113,16 @@ public class RedRight extends LinearOpMode {
         TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj1.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(48,-29),0)
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
+                    target = 215;
+                    //drop pixels
+                })
+                .waitSeconds(1)
                     .build();
 
 
 
-        TrajectorySequence traj12 = drive.trajectorySequenceBuilder(traj2.end())
+        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj2.end())
                 .splineTo(new Vector2d(43,-35),Math.toRadians(180))
                 .build();
 
@@ -106,8 +132,8 @@ public class RedRight extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
         //int target = 100;
 
-        sleep(5000);
-        getLocationOfProp();
+
+
 
 
 
@@ -116,23 +142,34 @@ public class RedRight extends LinearOpMode {
 
 
         waitForStart();
+        lift_left.setPower(0.5);
+        lift_right.setPower(0.5);
+        sleep(1000);
+        lift_left.setPower(0);
+        lift_right.setPower(0);
+        left_intake.setPosition(0.5);
+        right_intake.setPosition(0.5);
+        sleep(2000);
+        getLocationOfProp();
+        sleep(1000);
 
         if (locationOfProp == 1) {
             drive.followTrajectory(traj1);
-            //drive.followTrajectorySequence(traj4);
-        }
+            sleep(1000);
+            drive.followTrajectorySequence(traj4);
+       }
         if (locationOfProp == 2) {
             drive.followTrajectory(traj2);
-            drive.followTrajectorySequence(traj12);
+            drive.followTrajectorySequence(traj5);
 
         }
         if (locationOfProp == 3) {
             drive.followTrajectory(traj3);
-        }
+      }
 
         while (opModeIsActive()) {
             controller.setPID(p, i, d);
-            int armPos = lift_left.getCurrentPosition();
+            int armPos = lift_right.getCurrentPosition();
             double pid = controller.calculate(armPos, target);
             double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
