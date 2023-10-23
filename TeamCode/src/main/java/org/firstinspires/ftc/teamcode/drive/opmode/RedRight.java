@@ -103,7 +103,7 @@ public class RedRight extends LinearOpMode {
                                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
-                        .splineTo(new Vector2d(3,-19), Math.toRadians(0))
+                        .splineTo(new Vector2d(16,-19), Math.toRadians(180))
                                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(startPose)

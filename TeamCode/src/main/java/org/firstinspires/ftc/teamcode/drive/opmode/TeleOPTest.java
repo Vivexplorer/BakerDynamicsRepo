@@ -109,7 +109,7 @@ public class TeleOPTest extends OpMode {
         if (gamepad2.dpad_up) {
             target += (Math.floor(elapsedTime.seconds())  * 10);
         }else if(gamepad2.dpad_down) {
-            target -= (Math.floor(elapsedTime.seconds())  * 10);
+            target -= (Math.floor(elapsedTime.seconds())  * 10);//precision functions
         }
         elapsedTime.reset();
 
