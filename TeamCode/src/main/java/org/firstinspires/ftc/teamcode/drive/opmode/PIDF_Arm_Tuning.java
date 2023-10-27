@@ -5,12 +5,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
 @Config
 
 @Autonomous(group = "drive")
@@ -18,8 +20,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class PIDF_Arm_Tuning extends LinearOpMode {
     private PIDController controller;
 
-    public static double p = 0, i = 0, d=0;
-    public static double f = 0;
+    public static double p = 0.0144, i = 0.02, d=0.0032;
+    public static double f = 0.3;
 
     public static int target = 0;
 
@@ -28,6 +30,8 @@ public class PIDF_Arm_Tuning extends LinearOpMode {
     private DcMotorEx arm_motor_left;
 
     private DcMotorEx arm_motor_right;
+
+    SampleMecanumDrive drive;
 
     @Override
     public void runOpMode() {
@@ -41,13 +45,15 @@ public class PIDF_Arm_Tuning extends LinearOpMode {
         arm_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         arm_motor_right = hardwareMap.get(DcMotorEx.class,"lift_right");
 
-        arm_motor_left.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm_motor_right.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
 
         waitForStart();
 
         while (opModeIsActive()) {
             controller.setPID(p, i, d);
-            int armPos = arm_motor_left.getCurrentPosition();
+            int armPos = (arm_motor_left.getCurrentPosition() + arm_motor_right.getCurrentPosition()) / 2;
             double pid = controller.calculate(armPos, target);
             double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
@@ -58,6 +64,8 @@ public class PIDF_Arm_Tuning extends LinearOpMode {
 
             telemetry.addData("pos", armPos);
             telemetry.addData("target", target);
+            telemetry.addData("rightArmPosition", arm_motor_right.getCurrentPosition());
+            telemetry.addData("leftArmPosition", arm_motor_left.getCurrentPosition());
             telemetry.update();
         }
     }
