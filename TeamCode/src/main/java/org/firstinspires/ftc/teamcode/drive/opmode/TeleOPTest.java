@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TeleOPTest extends OpMode {
     private PIDController controller;
 
-    public static double p = 0.0144, i = 0.02, d=0.0032;
+    public static double p = 0.0144, i = 0.02, d=0.0022;
     public static double f = 0.3;
 
     public static int target = 0;
@@ -51,36 +51,27 @@ public class TeleOPTest extends OpMode {
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
 
-        lift_motor_left.setDirection(DcMotorEx.Direction.REVERSE);
-        lift_motor_right.setDirection(DcMotorSimple.Direction.REVERSE);
-
-
         controller = new PIDController(p, i, d);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
-        lift_motor_left.setDirection(DcMotorSimple.Direction.REVERSE);
-
         intake = hardwareMap.get(DcMotorEx.class, "intake");
 
+        lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
+        lift_motor_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lift_motor_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-
-
-
-
-
+        MOTOR_POWERS = 0.4;
 
 
     }
     @Override
     public void loop() {
-        if (gamepad2.b) {
-            MOTOR_POWERS = 0.7;
-        }else {
-            MOTOR_POWERS = 0.5;
-        }
+
+
         controller.setPID(p, i, d);
 
         int armPos = (lift_motor_left.getCurrentPosition() + lift_motor_right.getCurrentPosition()) / 2;
@@ -94,6 +85,8 @@ public class TeleOPTest extends OpMode {
 
         telemetry.addData("pos", armPos);
         telemetry.addData("target", target);
+        telemetry.addData("rightArmPosition", lift_motor_right.getCurrentPosition());
+        telemetry.addData("leftArmPosition", lift_motor_left.getCurrentPosition());
         telemetry.update();
 
         if (gamepad2.a) {
@@ -146,7 +139,7 @@ public class TeleOPTest extends OpMode {
 
     }
     public void lift_up() {
-        target = -140;
+        target = 200;
     }
     public void lift_neutral() {
         target = 10;

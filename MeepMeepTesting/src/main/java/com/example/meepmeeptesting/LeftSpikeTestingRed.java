@@ -15,14 +15,16 @@ public class LeftSpikeTestingRed {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(90)))
-                                .splineTo(new Vector2d(10, -36), Math.toRadians(170))
-                                .back(10)
+                        drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(270)))
+                                .back(5)
+                                .turn(Math.toRadians(90))
+                                .strafeLeft(22)
+                                .forward(5)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(40,-29),Math.toRadians(180))
-                                .forward(8)
-                                .strafeRight(30)
-                                .forward(10)
+                                .splineTo(new Vector2d(40,-29),Math.toRadians(0))
+                                .back(8)
+                                .strafeLeft(30)
+                                .back(10)
                                 .build()
                 );
 

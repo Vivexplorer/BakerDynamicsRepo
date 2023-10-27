@@ -82,14 +82,20 @@ public class RedRight extends LinearOpMode {
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
 
+        lift_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        lift_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lift_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
         right_intake.setDirection(Servo.Direction.REVERSE);
 
-        lift_left.setDirection(DcMotorEx.Direction.REVERSE);
 
 
 
 
-        Pose2d startPose = new Pose2d(12,-60, Math.toRadians(90));
+
+        Pose2d startPose = new Pose2d(12,-60, Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
 
@@ -126,10 +132,14 @@ public class RedRight extends LinearOpMode {
                 .splineTo(new Vector2d(43,-35),Math.toRadians(180))
                 .build();
 
+
         initOpenCV();
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
+
+        getLocationOfProp();
+        sleep(5000);
         //int target = 100;
 
 
@@ -142,16 +152,14 @@ public class RedRight extends LinearOpMode {
 
 
         waitForStart();
-        lift_left.setPower(0.5);
-        lift_right.setPower(0.5);
-        sleep(1000);
-        lift_left.setPower(0);
-        lift_right.setPower(0);
-        left_intake.setPosition(0.5);
-        right_intake.setPosition(0.5);
-        sleep(2000);
-        getLocationOfProp();
-        sleep(1000);
+//        lift_left.setPower(0.5);
+//        lift_right.setPower(0.5);
+//        sleep(1000);
+//        lift_left.setPower(0);
+//        lift_right.setPower(0);
+//        left_intake.setPosition(0.5);
+//        right_intake.setPosition(0.5);
+//        sleep(2000);
 
         if (locationOfProp == 1) {
             drive.followTrajectory(traj1);

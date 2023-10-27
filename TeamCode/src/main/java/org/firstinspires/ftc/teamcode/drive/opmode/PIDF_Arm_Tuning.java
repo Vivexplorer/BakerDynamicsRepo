@@ -45,7 +45,12 @@ public class PIDF_Arm_Tuning extends LinearOpMode {
         arm_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         arm_motor_right = hardwareMap.get(DcMotorEx.class,"lift_right");
 
-        arm_motor_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        arm_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        arm_motor_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        arm_motor_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
 
 
 
