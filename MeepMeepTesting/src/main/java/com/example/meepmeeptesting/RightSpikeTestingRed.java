@@ -21,6 +21,7 @@ public class RightSpikeTestingRed {
                                 .splineTo(new Vector2d(40,-42),Math.toRadians(180))
                                 .waitSeconds(1)
                                 .splineToConstantHeading(new Vector2d(48,-42),Math.toRadians(180))
+                                .waitSeconds(1)
                                 .strafeRight(17)
                                 .forward(10)
 
