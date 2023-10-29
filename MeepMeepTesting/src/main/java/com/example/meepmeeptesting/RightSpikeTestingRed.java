@@ -14,16 +14,16 @@ public class RightSpikeTestingRed {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(90)))
-                                .splineTo(new Vector2d(23,-42),Math.toRadians(90))
-                                .waitSeconds(1)
+                        drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(270)))
+                                .back(5)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(40,-42),Math.toRadians(180))
-                                .waitSeconds(1)
-                                .splineToConstantHeading(new Vector2d(48,-42),Math.toRadians(180))
-                                .waitSeconds(1)
-                                .strafeRight(17)
-                                .forward(10)
+                                .splineToConstantHeading(new Vector2d(23,-42),Math.toRadians(270))
+                                .forward(9)
+                                .setReversed(true)
+                                .splineTo(new Vector2d(40,-42),Math.toRadians(0))
+                                .splineToConstantHeading(new Vector2d(48,-42),Math.toRadians(0))
+                                .strafeLeft(17)
+                                .back(10)
 
                                 .build()
                 );

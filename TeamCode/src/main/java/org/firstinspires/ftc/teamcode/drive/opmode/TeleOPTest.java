@@ -121,16 +121,16 @@ public class TeleOPTest extends OpMode {
         }
 
         if (gamepad2.left_bumper) {
-            left_claw.setPosition(0.1);
+            left_claw.setPosition(1);
         }
 
         if (gamepad2.right_bumper) {
-            right_claw.setPosition(0.1);
+            right_claw.setPosition(1);
         }
 
         if (gamepad2.dpad_down) {
-            right_claw.setPosition(1);
-            left_claw.setPosition(1);
+            right_claw.setPosition(0.1);
+            left_claw.setPosition(0.1);
         }
 
 //        if (gamepad2.dpad_up) {

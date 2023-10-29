@@ -74,6 +74,53 @@ public class RedRight extends LinearOpMode {
 
     private Servo left_claw;
 
+    TrajectorySequence left1;
+    TrajectorySequence left2;
+
+    Trajectory left3;
+
+    TrajectorySequence left4;
+
+    TrajectorySequence left5;
+
+    Trajectory left6;
+
+    Trajectory left7;
+
+    TrajectorySequence left8;
+
+    TrajectorySequence mid1;
+
+    TrajectorySequence mid2;
+
+    TrajectorySequence mid3;
+
+    TrajectorySequence mid4;
+
+    Trajectory mid5;
+
+    TrajectorySequence mid6;
+
+    TrajectorySequence mid7;
+
+    Trajectory mid8;
+
+    TrajectorySequence mid9;
+
+    Trajectory right1;
+
+    TrajectorySequence right2;
+
+    TrajectorySequence right3;
+
+    TrajectorySequence right4;
+
+    Trajectory right5;
+
+    Trajectory right6;
+
+    Trajectory right7;
+
 
     @Override
     public void runOpMode() {
@@ -105,70 +152,223 @@ public class RedRight extends LinearOpMode {
         right_intake.setDirection(Servo.Direction.REVERSE);
 
 
-
-
-
-
-        Pose2d startPose = new Pose2d(12,-60, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(12, -60, Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
 
-        Trajectory left1 = drive.trajectoryBuilder(startPose)
+
+
+
+        left1 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(new Vector2d(24, -42))
-                                .build();
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    right_claw.setPosition(0.1);
+                    left_claw.setPosition(0.1);
+                    target = 100;
+                })
 
-        Trajectory left2 = drive.trajectoryBuilder(left1.end())
-                .splineTo(new Vector2d(10, -37), Math.toRadians(140))
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(left2);
+                })
                 .build();
 
-        Trajectory left3 = drive.trajectoryBuilder(left2.end())
+        left2 = drive.trajectorySequenceBuilder(left1.end())
+                .splineTo(new Vector2d(10, -35), Math.toRadians(140))
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+                    target = 20;
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    right_claw.setPosition(1);
+                })
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectoryAsync(left3);
+                })
+
+                .build();
+
+
+        left3 = drive.trajectoryBuilder(left2.end())
                 .forward(10)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(left4);
+                })
                 .build();
 
-        TrajectorySequence left4 = drive.trajectorySequenceBuilder(left3.end())
-                        .setReversed(true)
-                        .splineTo(new Vector2d(40,-29),Math.toRadians(0))
+        left4 = drive.trajectorySequenceBuilder(left3.end())
+                .setReversed(true)
+                .splineTo(new Vector2d(40, -29), Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(left5);
+                })
                 .build();
 
-        Trajectory left5 = drive.trajectoryBuilder(left4.end())
+        left5 = drive.trajectorySequenceBuilder(left4.end())
+                .back(8)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectoryAsync(left6);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+                    target = 150;
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    left_claw.setPosition(1);
+                })
+
+
+                .build();
+
+        left6 = drive.trajectoryBuilder(left5.end())
+                .forward(5)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectoryAsync(left7);
+                })
+                .build();
+
+        left7 = drive.trajectoryBuilder(left6.end())
+                .strafeLeft(30)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(left8);
+                })
+                .build();
+
+        left8 = drive.trajectorySequenceBuilder(left7.end())
+                .back(15)
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+                    target = -13;
+                })
+
+
+                .build();
+
+
+        mid1 = drive.trajectorySequenceBuilder(startPose)
+                .back(5)
+                .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
+                    target = 100;
+                })
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(mid2);
+                })
+                .build();
+
+        mid2 = drive.trajectorySequenceBuilder(mid1.end())
+                .splineToConstantHeading(new Vector2d(27, -52), Math.toRadians(270))
+                .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
+                    target = 30;
+                })
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(mid3);
+                })
+                .build();
+
+        mid3 = drive.trajectorySequenceBuilder(mid2.end())
+                .splineTo(new Vector2d(34, -24), Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(mid4);
+                })
+                .build();
+
+        mid4 = drive.trajectorySequenceBuilder(mid3.end())
+                .back(8)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    right_claw.setPosition(0.1);
+                })
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectoryAsync(mid5);
+                })
+                .build();
+
+        mid5 = drive.trajectoryBuilder(mid4.end())
+                .forward(8)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(mid6);
+                })
+                .build();
+
+        mid6 = drive.trajectorySequenceBuilder(mid5.end())
+                .splineTo(new Vector2d(42,-36),Math.toRadians(180))
+                .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
+                    target = 150;
+                })
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(mid7);
+                })
+                .build();
+
+        mid7 = drive.trajectorySequenceBuilder(mid6.end())
+                .back(7)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    left_claw.setPosition(0.1);
+                })
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectoryAsync(mid8);
+                })
+                .build();
+
+        mid8 = drive.trajectoryBuilder(mid7.end())
+                .strafeLeft(22)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(mid9);
+                })
+                .build();
+
+        mid9 = drive.trajectorySequenceBuilder(mid8.end())
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    target = -13;
+                })
                 .back(8)
                 .build();
 
-        Trajectory left6 = drive.trajectoryBuilder(left5.end())
-                .forward(5)
+        right1 = drive.trajectoryBuilder(startPose)
+                .back(5)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(right2);
+                })
+
                 .build();
 
-        Trajectory left7 = drive.trajectoryBuilder(left6.end())
-                .strafeLeft(30)
+        right2 = drive.trajectorySequenceBuilder(right1.end())
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(23,-42),Math.toRadians(270))
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(right3);
+                })
                 .build();
 
-        Trajectory left8 = drive.trajectoryBuilder(left7.end())
-                .back(15)
+        right3 = drive.trajectorySequenceBuilder(right2.end())
+                .forward(9)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectorySequenceAsync(right4);
+                })
                 .build();
 
+        right4 = drive.trajectorySequenceBuilder(right3.end())
+                .setReversed(true)
+                .splineTo(new Vector2d(40,-42),Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectoryAsync(right5);
+                })
+                .build();
 
+        right5 = drive.trajectoryBuilder(right4.end())
+                .splineToConstantHeading(new Vector2d(48,-42),Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectoryAsync(right6);
+                })
+                .build();
 
+        right6 = drive.trajectoryBuilder(right5.end())
+                .strafeLeft(17)
+                .addDisplacementMarker(() -> {
+                    drive.followTrajectoryAsync(right7);
+                })
+                .build();
 
+        right7 = drive.trajectoryBuilder(right6.end())
+                .back(10)
+                .build();
 
-
-
-
-        Trajectory mid1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(24,-24), Math.toRadians(180))
-                                .build();
-
-        //Trajectory mid2 = drive.trajectoryBuilder(mid1.end())
-
-        Trajectory traj3 = drive.trajectoryBuilder(startPose)
-                        .splineTo(new Vector2d(20,-32),Math.toRadians(180))
-                                .build();
-
-
-
-
-//        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(mid2.end())
-//                .splineTo(new Vector2d(43,-35),Math.toRadians(180))
-//                .build();
 
 
         initOpenCV();
@@ -176,16 +376,30 @@ public class RedRight extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
-        right_claw.setPosition(1);
-        left_claw.setPosition(1);
+        right_claw.setPosition(0.9);//pick up pixel
+        left_claw.setPosition(0.9);
 
 
-        sleep(5000);
+        sleep(4000);
         getLocationOfProp();
 
 
-
         waitForStart();
+
+
+
+
+
+        if (locationOfProp == 1) {
+            drive.followTrajectorySequenceAsync(left1);
+        }
+        if (locationOfProp == 2) {
+            drive.followTrajectorySequenceAsync(mid1);
+
+        }
+        if (locationOfProp == 3) {
+            drive.followTrajectoryAsync(right1);
+        }
 
         while (opModeIsActive()) {
 
@@ -206,49 +420,6 @@ public class RedRight extends LinearOpMode {
 
             // The OpenCV pipeline automatically processes frames and handles detection
         }
-
-        left_claw.setPosition(1);
-        right_claw.setPosition(1);
-
-        sleep(1000);
-
-        target = 100;
-
-        sleep(4000);
-
-
-
-        if (locationOfProp == 1) {
-            drive.followTrajectoryAsync(left1);
-            drive.followTrajectoryAsync(left2);
-            target = 30;
-            sleep(2000);
-            right_claw.setPosition(0.1);
-            sleep(2000);
-            //drop pixel
-            drive.followTrajectoryAsync(left3);
-            drive.followTrajectorySequenceAsync(left4);
-            drive.followTrajectoryAsync(left5);
-            target = 150;
-            sleep(2000);
-            left_claw.setPosition(0.1);
-            //drop pixel onto board
-            sleep(2000);
-            drive.followTrajectoryAsync(left6);
-
-            target = 10;
-            drive.followTrajectoryAsync(left7);
-            drive.followTrajectoryAsync(left8);
-        }
-        if (locationOfProp == 2) {
-           // drive.followTrajectory(traj2);
-            //drive.followTrajectorySequence(traj5);
-
-        }
-        if (locationOfProp == 3) {
-            drive.followTrajectoryAsync(traj3);
-      }
-
 
 
         // Release resources

@@ -15,14 +15,18 @@ public class MiddleSpikeTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(270)))
-                                .setReversed(false)
-                                .splineTo(new Vector2d(24,-24), Math.toRadians(0))
-                                .back(10)
-                                .splineTo(new Vector2d(40,-34),Math.toRadians(0))
-                                .splineToConstantHeading(new Vector2d(48, -34), Math.toRadians(0))
-                                .waitSeconds(2)
-                                .strafeLeft(25)
-                                .back(10)
+                                .back(5)
+                                .splineToConstantHeading(new Vector2d(27, -52), Math.toRadians(270))
+                                .splineTo(new Vector2d(34, -24), Math.toRadians(0))
+                                .back(8)
+                                .forward(8)
+                                .splineTo(new Vector2d(42,-36),Math.toRadians(180))
+                                .back(7)
+                                .strafeLeft(22)
+                                .back(8)
+
+
+
 
                                 .build()
                 );
