@@ -14,14 +14,15 @@ public class MiddleSpikeTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(90)))
-                                .splineTo(new Vector2d(24,-24), Math.toRadians(180))
+                        drive.trajectorySequenceBuilder(new Pose2d(12, -60, Math.toRadians(270)))
+                                .setReversed(false)
+                                .splineTo(new Vector2d(24,-24), Math.toRadians(0))
                                 .back(10)
-                                .splineTo(new Vector2d(40,-34),Math.toRadians(180))
-                                .splineToConstantHeading(new Vector2d(48, -34), Math.toRadians(180))
+                                .splineTo(new Vector2d(40,-34),Math.toRadians(0))
+                                .splineToConstantHeading(new Vector2d(48, -34), Math.toRadians(0))
                                 .waitSeconds(2)
-                                .strafeRight(25)
-                                .forward(10)
+                                .strafeLeft(25)
+                                .back(10)
 
                                 .build()
                 );

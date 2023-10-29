@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -30,10 +31,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
+@Config
 
-@Autonomous(name = "RedRight")
+@Autonomous(name = "RedRight", group = "drive")
 
 public class RedRight extends LinearOpMode {
+
+    private PIDController controller;
+
 
     double locationOfProp = 0;
 
@@ -49,14 +54,13 @@ public class RedRight extends LinearOpMode {
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
     public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
 
-    private PIDController controller;
 
-    public static double p = 0.0154, i = 0.001, d=0.0028;
-    public static double f = 0.3;
+    public double p = 0.0094, i = 0.04, d=0.0032;
+    public double f = 0.3;
 
     public static int target = 0;
 
-    private final double ticks_in_degrees = 22.5;
+    private final double ticks_in_degrees = 22.4;
 
     private DcMotorEx lift_left;
 
@@ -65,6 +69,10 @@ public class RedRight extends LinearOpMode {
     private Servo left_intake;
 
     private Servo right_intake;
+
+    private Servo right_claw;
+
+    private Servo left_claw;
 
 
     @Override
@@ -88,6 +96,12 @@ public class RedRight extends LinearOpMode {
         lift_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lift_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+        right_claw = hardwareMap.get(Servo.class, "right claw");
+        left_claw = hardwareMap.get(Servo.class, "left claw");
+
+        left_claw.setDirection(Servo.Direction.REVERSE);
+
+
         right_intake.setDirection(Servo.Direction.REVERSE);
 
 
@@ -99,38 +113,62 @@ public class RedRight extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
 
-        Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                        .splineTo(new Vector2d(4, -33), Math.toRadians(108))
-
-                .addTemporalMarker(0.5,0.1, () -> {
-                    right_intake.setPosition(1);
-                    left_intake.setPosition(1);
-                })
+        Trajectory left1 = drive.trajectoryBuilder(startPose)
+                .lineTo(new Vector2d(24, -42))
                                 .build();
 
-        Trajectory traj2 = drive.trajectoryBuilder(startPose)
-                        .splineTo(new Vector2d(16,-19), Math.toRadians(180))
+        Trajectory left2 = drive.trajectoryBuilder(left1.end())
+                .splineTo(new Vector2d(10, -37), Math.toRadians(140))
+                .build();
+
+        Trajectory left3 = drive.trajectoryBuilder(left2.end())
+                .forward(10)
+                .build();
+
+        TrajectorySequence left4 = drive.trajectorySequenceBuilder(left3.end())
+                        .setReversed(true)
+                        .splineTo(new Vector2d(40,-29),Math.toRadians(0))
+                .build();
+
+        Trajectory left5 = drive.trajectoryBuilder(left4.end())
+                .back(8)
+                .build();
+
+        Trajectory left6 = drive.trajectoryBuilder(left5.end())
+                .forward(5)
+                .build();
+
+        Trajectory left7 = drive.trajectoryBuilder(left6.end())
+                .strafeLeft(30)
+                .build();
+
+        Trajectory left8 = drive.trajectoryBuilder(left7.end())
+                .back(15)
+                .build();
+
+
+
+
+
+
+
+
+        Trajectory mid1 = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(24,-24), Math.toRadians(180))
                                 .build();
+
+        //Trajectory mid2 = drive.trajectoryBuilder(mid1.end())
 
         Trajectory traj3 = drive.trajectoryBuilder(startPose)
                         .splineTo(new Vector2d(20,-32),Math.toRadians(180))
                                 .build();
 
-        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj1.end())
-                .setReversed(true)
-                .splineTo(new Vector2d(48,-29),0)
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
-                    target = 215;
-                    //drop pixels
-                })
-                .waitSeconds(1)
-                    .build();
 
 
 
-        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(traj2.end())
-                .splineTo(new Vector2d(43,-35),Math.toRadians(180))
-                .build();
+//        TrajectorySequence traj5 = drive.trajectorySequenceBuilder(mid2.end())
+//                .splineTo(new Vector2d(43,-35),Math.toRadians(180))
+//                .build();
 
 
         initOpenCV();
@@ -138,53 +176,29 @@ public class RedRight extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
-        getLocationOfProp();
+        right_claw.setPosition(1);
+        left_claw.setPosition(1);
+
+
         sleep(5000);
-        //int target = 100;
+        getLocationOfProp();
 
-
-
-
-
-
-        //lift the arm
-        //drop servo
 
 
         waitForStart();
-//        lift_left.setPower(0.5);
-//        lift_right.setPower(0.5);
-//        sleep(1000);
-//        lift_left.setPower(0);
-//        lift_right.setPower(0);
-//        left_intake.setPosition(0.5);
-//        right_intake.setPosition(0.5);
-//        sleep(2000);
-
-        if (locationOfProp == 1) {
-            drive.followTrajectory(traj1);
-            sleep(1000);
-            drive.followTrajectorySequence(traj4);
-       }
-        if (locationOfProp == 2) {
-            drive.followTrajectory(traj2);
-            drive.followTrajectorySequence(traj5);
-
-        }
-        if (locationOfProp == 3) {
-            drive.followTrajectory(traj3);
-      }
 
         while (opModeIsActive()) {
+
             controller.setPID(p, i, d);
-            int armPos = lift_right.getCurrentPosition();
+            int armPos = (lift_right.getCurrentPosition() + lift_left.getCurrentPosition()) / 2;
             double pid = controller.calculate(armPos, target);
             double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
             double power = pid + ff;
 
-            lift_right.setPower(power);
             lift_left.setPower(power);
+            lift_right.setPower(power);
+
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
             telemetry.addData("Distance in Inch", (getDistance(width)));
             telemetry.addData("Location of Prop", locationOfProp);
@@ -193,9 +207,56 @@ public class RedRight extends LinearOpMode {
             // The OpenCV pipeline automatically processes frames and handles detection
         }
 
+        left_claw.setPosition(1);
+        right_claw.setPosition(1);
+
+        sleep(1000);
+
+        target = 100;
+
+        sleep(4000);
+
+
+
+        if (locationOfProp == 1) {
+            drive.followTrajectoryAsync(left1);
+            drive.followTrajectoryAsync(left2);
+            target = 30;
+            sleep(2000);
+            right_claw.setPosition(0.1);
+            sleep(2000);
+            //drop pixel
+            drive.followTrajectoryAsync(left3);
+            drive.followTrajectorySequenceAsync(left4);
+            drive.followTrajectoryAsync(left5);
+            target = 150;
+            sleep(2000);
+            left_claw.setPosition(0.1);
+            //drop pixel onto board
+            sleep(2000);
+            drive.followTrajectoryAsync(left6);
+
+            target = 10;
+            drive.followTrajectoryAsync(left7);
+            drive.followTrajectoryAsync(left8);
+        }
+        if (locationOfProp == 2) {
+           // drive.followTrajectory(traj2);
+            //drive.followTrajectorySequence(traj5);
+
+        }
+        if (locationOfProp == 3) {
+            drive.followTrajectoryAsync(traj3);
+      }
+
+
+
         // Release resources
         controlHubCam.stopStreaming();
     }
+
+
+
 
     private void initOpenCV() {
 
@@ -307,6 +368,11 @@ public class RedRight extends LinearOpMode {
             locationOfProp=3;
         }
     }
+
+    public void lift_up() {
+        target = 200;
+    }
+
 
 
 }

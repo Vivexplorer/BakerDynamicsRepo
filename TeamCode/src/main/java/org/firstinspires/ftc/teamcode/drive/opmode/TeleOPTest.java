@@ -22,10 +22,10 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TeleOPTest extends OpMode {
     private PIDController controller;
 
-    public static double p = 0.0144, i = 0.02, d=0.0022;
+    public static double p = 0.0094, i = 0.04, d=0.0032;
     public static double f = 0.3;
 
-    public static int target = 0;
+    public static int target = -10;
 
     public static double MOTOR_POWERS;
 
@@ -39,6 +39,10 @@ public class TeleOPTest extends OpMode {
 
     private DcMotorEx intake;
 
+    private Servo right_claw;
+
+    private Servo left_claw;
+
 
     SampleMecanumDrive drive ;
     @Override
@@ -50,6 +54,9 @@ public class TeleOPTest extends OpMode {
 
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
+
+        right_claw = hardwareMap.get(Servo.class, "right claw");
+        left_claw = hardwareMap.get(Servo.class, "left claw");
 
         controller = new PIDController(p, i, d);
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -64,7 +71,11 @@ public class TeleOPTest extends OpMode {
         lift_motor_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lift_motor_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+        left_claw.setDirection(Servo.Direction.REVERSE);
+
         MOTOR_POWERS = 0.4;
+
+        target = -13;
 
 
     }
@@ -95,18 +106,31 @@ public class TeleOPTest extends OpMode {
             lift_neutral();
         }
 
-        if (gamepad2.x) {
+        if (gamepad1.x) {
             intake.setPower(-1.0);
-        }else if (gamepad2.b) {
+        }else if (gamepad1.b) {
             intake.setPower(1);
         }else {
             intake.setPower(0);
         }
 
-        if (gamepad2.dpad_left) {
+        if (gamepad1.dpad_left) {
             intake_up();
-        }else if (gamepad2.dpad_right) {
+        }else if (gamepad1.dpad_right) {
             intake_down();
+        }
+
+        if (gamepad2.left_bumper) {
+            left_claw.setPosition(0.1);
+        }
+
+        if (gamepad2.right_bumper) {
+            right_claw.setPosition(0.1);
+        }
+
+        if (gamepad2.dpad_down) {
+            right_claw.setPosition(1);
+            left_claw.setPosition(1);
         }
 
 //        if (gamepad2.dpad_up) {
@@ -142,7 +166,7 @@ public class TeleOPTest extends OpMode {
         target = 200;
     }
     public void lift_neutral() {
-        target = 10;
+        target = -13;
     }
 
     public void intake_up() {
