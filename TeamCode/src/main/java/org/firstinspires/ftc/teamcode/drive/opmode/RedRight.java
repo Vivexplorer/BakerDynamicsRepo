@@ -5,8 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.profile.AccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -21,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
@@ -55,7 +58,8 @@ public class RedRight extends LinearOpMode {
     public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
 
 
-    public double p = 0.0094, i = 0.04, d=0.0032;
+    public double p = 0.0094, i = 0.05, d=0.0032;
+
     public double f = 0.3;
 
     public static int target = 0;
@@ -77,15 +81,15 @@ public class RedRight extends LinearOpMode {
     TrajectorySequence left1;
     TrajectorySequence left2;
 
-    Trajectory left3;
+    TrajectorySequence left3;
 
     TrajectorySequence left4;
 
     TrajectorySequence left5;
 
-    Trajectory left6;
+    TrajectorySequence left6;
 
-    Trajectory left7;
+    TrajectorySequence left7;
 
     TrajectorySequence left8;
 
@@ -120,6 +124,10 @@ public class RedRight extends LinearOpMode {
     Trajectory right6;
 
     Trajectory right7;
+
+
+
+
 
 
     @Override
@@ -160,37 +168,43 @@ public class RedRight extends LinearOpMode {
 
 
         left1 = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(24, -42))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                .back(33)
+                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
+                    left_intake.setPosition(1);
+                    right_intake.setPosition(1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     right_claw.setPosition(0.1);
                     left_claw.setPosition(0.1);
                     target = 100;
                 })
 
-                .addDisplacementMarker(() -> {
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
                     drive.followTrajectorySequenceAsync(left2);
                 })
+
+                .waitSeconds(5)
                 .build();
 
         left2 = drive.trajectorySequenceBuilder(left1.end())
-                .splineTo(new Vector2d(10, -35), Math.toRadians(140))
+                .turn(Math.toRadians(90))
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    target = 20;
+                    target = 40;
                 })
 
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     right_claw.setPosition(1);
                 })
-                .addDisplacementMarker(() -> {
-                    drive.followTrajectoryAsync(left3);
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                    drive.followTrajectorySequence(left3);
                 })
 
                 .build();
 
 
-        left3 = drive.trajectoryBuilder(left2.end())
+        left3 = drive.trajectorySequenceBuilder(left2.end())
                 .forward(10)
-                .addDisplacementMarker(() -> {
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
                     drive.followTrajectorySequenceAsync(left4);
                 })
                 .build();
@@ -198,15 +212,15 @@ public class RedRight extends LinearOpMode {
         left4 = drive.trajectorySequenceBuilder(left3.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(40, -29), Math.toRadians(0))
-                .addDisplacementMarker(() -> {
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
                     drive.followTrajectorySequenceAsync(left5);
                 })
                 .build();
 
         left5 = drive.trajectorySequenceBuilder(left4.end())
                 .back(8)
-                .addDisplacementMarker(() -> {
-                    drive.followTrajectoryAsync(left6);
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                    drive.followTrajectorySequenceAsync(left6);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     target = 150;
@@ -218,17 +232,17 @@ public class RedRight extends LinearOpMode {
 
                 .build();
 
-        left6 = drive.trajectoryBuilder(left5.end())
+        left6 = drive.trajectorySequenceBuilder(left5.end())
                 .forward(5)
-                .addDisplacementMarker(() -> {
-                    drive.followTrajectoryAsync(left7);
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                    drive.followTrajectorySequenceAsync(left7);
                 })
                 .build();
 
-        left7 = drive.trajectoryBuilder(left6.end())
-                .strafeLeft(30)
-                .addDisplacementMarker(() -> {
-                    drive.followTrajectorySequenceAsync(left8);
+        left7 = drive.trajectorySequenceBuilder(left6.end())
+                .strafeLeft(34)
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                    drive.followTrajectorySequence(left6);
                 })
                 .build();
 
@@ -376,8 +390,8 @@ public class RedRight extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
-        right_claw.setPosition(0.9);//pick up pixel
-        left_claw.setPosition(0.9);
+        right_claw.setPosition(0.1);//pick up pixel
+        left_claw.setPosition(0.1);
 
 
         sleep(4000);
@@ -417,6 +431,8 @@ public class RedRight extends LinearOpMode {
             telemetry.addData("Distance in Inch", (getDistance(width)));
             telemetry.addData("Location of Prop", locationOfProp);
             telemetry.update();
+
+            drive.update();
 
             // The OpenCV pipeline automatically processes frames and handles detection
         }

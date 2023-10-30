@@ -22,8 +22,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TeleOPTest extends OpMode {
     private PIDController controller;
 
-    public static double p = 0.0094, i = 0.04, d=0.0032;
-    public static double f = 0.3;
+    public double p = 0.0094, i = 0.05, d=0.0032;
+
+    public double f = 0.3;
 
     public static int target = -10;
 
@@ -44,7 +45,15 @@ public class TeleOPTest extends OpMode {
     private Servo left_claw;
 
 
+
     SampleMecanumDrive drive ;
+
+    ElapsedTime elapsedTime = new ElapsedTime();
+
+
+
+
+
     @Override
     public void init() {
         drive = new SampleMecanumDrive(hardwareMap);
@@ -73,9 +82,16 @@ public class TeleOPTest extends OpMode {
 
         left_claw.setDirection(Servo.Direction.REVERSE);
 
-        MOTOR_POWERS = 0.4;
+
+
+        MOTOR_POWERS = 0.55;
 
         target = -13;
+
+
+
+
+
 
 
     }
@@ -103,6 +119,8 @@ public class TeleOPTest extends OpMode {
         if (gamepad2.a) {
             lift_up();
         }else if (gamepad2.y) {
+            left_claw.setPosition(1);
+            right_claw.setPosition(1);
             lift_neutral();
         }
 
@@ -133,12 +151,11 @@ public class TeleOPTest extends OpMode {
             left_claw.setPosition(0.1);
         }
 
-//        if (gamepad2.dpad_up) {
-//            target += (Math.floor(elapsedTime.seconds())  * 10);
-//        }else if(gamepad2.dpad_down) {
-//            target -= (Math.floor(elapsedTime.seconds())  * 10);//precision functions
-//        }
-//        elapsedTime.reset();
+
+        if (gamepad2.dpad_up) {
+            target += (Math.floor(elapsedTime.seconds())  * 30);
+        }
+        elapsedTime.reset();
 
 
 
@@ -155,6 +172,10 @@ public class TeleOPTest extends OpMode {
             drive.setMotorPowers(-MOTOR_POWERS,MOTOR_POWERS,-MOTOR_POWERS,MOTOR_POWERS);
         }else if (gamepad1.right_stick_x<0) {
             drive.setMotorPowers(MOTOR_POWERS,-MOTOR_POWERS,MOTOR_POWERS,-MOTOR_POWERS);
+        }else if (gamepad1.dpad_up) {
+            drive.setMotorPowers(0.1, 0.1, 0.1, 0.1);
+        }else if (gamepad1.dpad_down) {
+            drive.setMotorPowers(-0.1, -0.1, -0.1, -0.1);
         }
         else {
             drive.setMotorPowers(0,0,0,0);
@@ -163,15 +184,15 @@ public class TeleOPTest extends OpMode {
 
     }
     public void lift_up() {
-        target = 200;
+        target = 240;
     }
     public void lift_neutral() {
-        target = -13;
+        target = -16;
     }
 
     public void intake_up() {
-        left_intake.setPosition(0.4);
-        right_intake.setPosition(0.4);
+        left_intake.setPosition(0.5);
+        right_intake.setPosition(0.5);
     }
     public void intake_down() {
         left_intake.setPosition(1);
