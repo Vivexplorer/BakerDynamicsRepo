@@ -183,7 +183,6 @@ public class RedRight extends LinearOpMode {
                     drive.followTrajectorySequenceAsync(left2);
                 })
 
-                .waitSeconds(5)
                 .build();
 
         left2 = drive.trajectorySequenceBuilder(left1.end())
