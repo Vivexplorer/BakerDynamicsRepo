@@ -81,6 +81,8 @@ public class RedRight extends LinearOpMode {
     TrajectorySequence left1;
     TrajectorySequence left2;
 
+    TrajectorySequence left21;
+
     TrajectorySequence left3;
 
     TrajectorySequence left4;
@@ -162,6 +164,9 @@ public class RedRight extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(12, -60, Math.toRadians(270));
 
+
+        Pose2d turn = new Pose2d(0, 0, Math.toRadians(90));
+
         drive.setPoseEstimate(startPose);
 
 
@@ -169,16 +174,6 @@ public class RedRight extends LinearOpMode {
 
         left1 = drive.trajectorySequenceBuilder(startPose)
                 .back(33)
-                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
-                    left_intake.setPosition(1);
-                    right_intake.setPosition(1);
-                })
-                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    right_claw.setPosition(0.1);
-                    left_claw.setPosition(0.1);
-                    target = 100;
-                })
-
                 .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
                     drive.followTrajectorySequenceAsync(left2);
                 })
@@ -186,18 +181,18 @@ public class RedRight extends LinearOpMode {
                 .build();
 
         left2 = drive.trajectorySequenceBuilder(left1.end())
-                .turn(Math.toRadians(90))
-                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    target = 40;
-                })
-
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    right_claw.setPosition(1);
-                })
+                .splineTo(new Vector2d(12, -27), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
-                    drive.followTrajectorySequence(left3);
+                    drive.followTrajectorySequenceAsync(left21);
                 })
 
+                .build();
+
+        left21 = drive.trajectorySequenceBuilder(left2.end())
+                .back(5)
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                    drive.followTrajectorySequenceAsync(left3);
+                })
                 .build();
 
 
