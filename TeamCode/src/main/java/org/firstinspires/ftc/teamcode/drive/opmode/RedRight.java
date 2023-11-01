@@ -339,7 +339,7 @@ public class RedRight extends LinearOpMode {
                 })
 
                 .UNSTABLE_addTemporalMarkerOffset( 1, () -> {
-                    drive.followTrajectorySequence(left6);
+                    drive.followTrajectorySequenceAsync(left8);
                 })
                 .build();
 
