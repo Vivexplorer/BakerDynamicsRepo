@@ -174,7 +174,6 @@ public class RedRight extends LinearOpMode {
 
 
         left1 = drive.trajectorySequenceBuilder(startPose)
-                .back(33)
                 .setAccelConstraint(new TrajectoryAccelerationConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
@@ -187,6 +186,8 @@ public class RedRight extends LinearOpMode {
                         return 6;
                     }
                 })
+                .back(33)
+
 //                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
 //                    left_intake.setPosition(1);
 //                    right_intake.setPosition(1);
@@ -204,6 +205,7 @@ public class RedRight extends LinearOpMode {
                 .build();
 
         left2 = drive.trajectorySequenceBuilder(left1.end())
+
                 .splineTo(new Vector2d(12, -27), Math.toRadians(180))
 //                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
 //                    target = 40;
@@ -219,6 +221,18 @@ public class RedRight extends LinearOpMode {
                 .build();
 
         left21 = drive.trajectorySequenceBuilder(left2.end())
+                .setAccelConstraint(new TrajectoryAccelerationConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 5;
+                    }
+                })
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 6;
+                    }
+                })
                 .back(5)
                 .UNSTABLE_addTemporalMarkerOffset( 0, () -> {
                     drive.followTrajectorySequenceAsync(left3);
@@ -234,8 +248,6 @@ public class RedRight extends LinearOpMode {
                 .build();
 
         left4 = drive.trajectorySequenceBuilder(left3.end())
-                .setReversed(true)
-                .splineTo(new Vector2d(40, -29), Math.toRadians(0))
                 .setAccelConstraint(new TrajectoryAccelerationConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
@@ -248,13 +260,19 @@ public class RedRight extends LinearOpMode {
                         return 6;
                     }
                 })
+                .setReversed(true)
+                .splineTo(new Vector2d(40, -29), Math.toRadians(0))
+
+                .UNSTABLE_addTemporalMarkerOffset(-1, () -> {
+                    target = 100;
+                })
+
                 .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
                     drive.followTrajectorySequenceAsync(left5);
                 })
                 .build();
 
         left5 = drive.trajectorySequenceBuilder(left4.end())
-                .back(8)
                 .setAccelConstraint(new TrajectoryAccelerationConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
@@ -267,10 +285,8 @@ public class RedRight extends LinearOpMode {
                         return 6;
                     }
                 })
+                .back(8)
 
-                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    target = 100;
-                })
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     left_claw.setPosition(0.1);
                 })
@@ -282,7 +298,6 @@ public class RedRight extends LinearOpMode {
                 .build();
 
         left6 = drive.trajectorySequenceBuilder(left5.end())
-                .forward(5)
                 .setAccelConstraint(new TrajectoryAccelerationConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
@@ -295,13 +310,14 @@ public class RedRight extends LinearOpMode {
                         return 6;
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                .forward(5)
+
+                .UNSTABLE_addTemporalMarkerOffset( 1, () -> {
                     drive.followTrajectorySequenceAsync(left7);
                 })
                 .build();
 
         left7 = drive.trajectorySequenceBuilder(left6.end())
-                .strafeLeft(34)
                 .setAccelConstraint(new TrajectoryAccelerationConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
@@ -314,14 +330,30 @@ public class RedRight extends LinearOpMode {
                         return 6;
                     }
                 })
-                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+
+                .strafeLeft(34)
+
+                .UNSTABLE_addTemporalMarkerOffset( 0, () -> {
                     drive.followTrajectorySequence(left6);
                 })
                 .build();
 
         left8 = drive.trajectorySequenceBuilder(left7.end())
+                .setAccelConstraint(new TrajectoryAccelerationConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 5;
+                    }
+                })
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 6;
+                    }
+                })
+
                 .back(15)
-                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     target = -13;
                 })
 
