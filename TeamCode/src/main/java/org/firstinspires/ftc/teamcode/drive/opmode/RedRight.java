@@ -220,7 +220,7 @@ public class RedRight extends LinearOpMode {
 
         left21 = drive.trajectorySequenceBuilder(left2.end())
                 .back(5)
-                .UNSTABLE_addTemporalMarkerOffset( 1, () -> {
+                .UNSTABLE_addTemporalMarkerOffset( 0, () -> {
                     drive.followTrajectorySequenceAsync(left3);
                 })
                 .build();
@@ -269,7 +269,7 @@ public class RedRight extends LinearOpMode {
                 })
 
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    target = 150;
+                    target = 100;
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     left_claw.setPosition(0.1);
