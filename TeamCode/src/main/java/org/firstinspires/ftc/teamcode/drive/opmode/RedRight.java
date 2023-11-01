@@ -310,7 +310,7 @@ public class RedRight extends LinearOpMode {
                         return 6;
                     }
                 })
-                .forward(5)
+                .forward(8)
 
                 .UNSTABLE_addTemporalMarkerOffset( 1, () -> {
                     drive.followTrajectorySequenceAsync(left7);
@@ -333,7 +333,12 @@ public class RedRight extends LinearOpMode {
 
                 .strafeLeft(34)
 
-                .UNSTABLE_addTemporalMarkerOffset( 0, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+                    right_intake.setPosition(1);
+                    left_intake.setPosition(1);
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset( 1, () -> {
                     drive.followTrajectorySequence(left6);
                 })
                 .build();
@@ -352,9 +357,14 @@ public class RedRight extends LinearOpMode {
                     }
                 })
 
-                .back(15)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                .back(18)
+                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
                     target = -13;
+                    lift_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                    lift_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+                    lift_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                    lift_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
                 })
 
 
