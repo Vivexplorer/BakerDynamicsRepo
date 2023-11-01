@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -7,6 +9,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.profile.AccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -164,9 +168,6 @@ public class RedRight extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(12, -60, Math.toRadians(270));
 
-
-        Pose2d turn = new Pose2d(0, 0, Math.toRadians(90));
-
         drive.setPoseEstimate(startPose);
 
 
@@ -174,7 +175,29 @@ public class RedRight extends LinearOpMode {
 
         left1 = drive.trajectorySequenceBuilder(startPose)
                 .back(33)
-                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                .setAccelConstraint(new TrajectoryAccelerationConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 5;
+                    }
+                })
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 6;
+                    }
+                })
+//                .UNSTABLE_addTemporalMarkerOffset(-3, () -> {
+//                    left_intake.setPosition(1);
+//                    right_intake.setPosition(1);
+//                })
+//                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+//                    right_claw.setPosition(0.1);
+//                    left_claw.setPosition(0.1);
+//                    target = 100;
+//                })
+
+                .UNSTABLE_addTemporalMarkerOffset( 1, () -> {
                     drive.followTrajectorySequenceAsync(left2);
                 })
 
@@ -182,7 +205,14 @@ public class RedRight extends LinearOpMode {
 
         left2 = drive.trajectorySequenceBuilder(left1.end())
                 .splineTo(new Vector2d(12, -27), Math.toRadians(180))
-                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+//                .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
+//                    target = 40;
+//                })
+//
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    right_claw.setPosition(1);
+//                })
+                .UNSTABLE_addTemporalMarkerOffset( 1, () -> {
                     drive.followTrajectorySequenceAsync(left21);
                 })
 
@@ -190,7 +220,7 @@ public class RedRight extends LinearOpMode {
 
         left21 = drive.trajectorySequenceBuilder(left2.end())
                 .back(5)
-                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset( 0, () -> {
                     drive.followTrajectorySequenceAsync(left3);
                 })
                 .build();
@@ -206,6 +236,18 @@ public class RedRight extends LinearOpMode {
         left4 = drive.trajectorySequenceBuilder(left3.end())
                 .setReversed(true)
                 .splineTo(new Vector2d(40, -29), Math.toRadians(0))
+                .setAccelConstraint(new TrajectoryAccelerationConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 5;
+                    }
+                })
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 6;
+                    }
+                })
                 .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
                     drive.followTrajectorySequenceAsync(left5);
                 })
@@ -213,14 +255,27 @@ public class RedRight extends LinearOpMode {
 
         left5 = drive.trajectorySequenceBuilder(left4.end())
                 .back(8)
-                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
-                    drive.followTrajectorySequenceAsync(left6);
+                .setAccelConstraint(new TrajectoryAccelerationConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 5;
+                    }
                 })
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 6;
+                    }
+                })
+
                 .UNSTABLE_addTemporalMarkerOffset(-2, () -> {
-                    target = 150;
+                    target = 100;
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    left_claw.setPosition(1);
+                    left_claw.setPosition(0.1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
+                    drive.followTrajectorySequenceAsync(left6);
                 })
 
 
@@ -228,6 +283,18 @@ public class RedRight extends LinearOpMode {
 
         left6 = drive.trajectorySequenceBuilder(left5.end())
                 .forward(5)
+                .setAccelConstraint(new TrajectoryAccelerationConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 5;
+                    }
+                })
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 6;
+                    }
+                })
                 .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
                     drive.followTrajectorySequenceAsync(left7);
                 })
@@ -235,6 +302,18 @@ public class RedRight extends LinearOpMode {
 
         left7 = drive.trajectorySequenceBuilder(left6.end())
                 .strafeLeft(34)
+                .setAccelConstraint(new TrajectoryAccelerationConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 5;
+                    }
+                })
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 6;
+                    }
+                })
                 .UNSTABLE_addTemporalMarkerOffset( 3, () -> {
                     drive.followTrajectorySequence(left6);
                 })
@@ -384,8 +463,7 @@ public class RedRight extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
-        right_claw.setPosition(0.1);//pick up pixel
-        left_claw.setPosition(0.1);
+        left_claw.setPosition(1);
 
 
         sleep(4000);

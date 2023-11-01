@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.profile.AccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -15,6 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
 
 
 @TeleOp(group = "drive")
@@ -46,6 +49,8 @@ public class TeleOPTest extends OpMode {
 
 
 
+
+
     SampleMecanumDrive drive ;
 
     ElapsedTime elapsedTime = new ElapsedTime();
@@ -64,8 +69,8 @@ public class TeleOPTest extends OpMode {
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
 
-        right_claw = hardwareMap.get(Servo.class, "right claw");
-        left_claw = hardwareMap.get(Servo.class, "left claw");
+        right_claw = hardwareMap.get(Servo.class, "left claw");
+        left_claw = hardwareMap.get(Servo.class, "right claw");
 
         controller = new PIDController(p, i, d);
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -81,6 +86,8 @@ public class TeleOPTest extends OpMode {
         lift_motor_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         left_claw.setDirection(Servo.Direction.REVERSE);
+
+        right_intake.setDirection(Servo.Direction.REVERSE);
 
 
 
@@ -119,8 +126,8 @@ public class TeleOPTest extends OpMode {
         if (gamepad2.a) {
             lift_up();
         }else if (gamepad2.y) {
-            left_claw.setPosition(1);
-            right_claw.setPosition(1);
+            left_claw.setPosition(0.1);
+            right_claw.setPosition(0.1);
             lift_neutral();
         }
 
@@ -139,23 +146,30 @@ public class TeleOPTest extends OpMode {
         }
 
         if (gamepad2.left_bumper) {
-            left_claw.setPosition(1);
+            left_claw.setPosition(0.1);
         }
 
         if (gamepad2.right_bumper) {
-            right_claw.setPosition(1);
+            right_claw.setPosition(0.1);
         }
 
         if (gamepad2.dpad_down) {
-            right_claw.setPosition(0.1);
-            left_claw.setPosition(0.1);
+            right_claw.setPosition(1);
+            left_claw.setPosition(1);
         }
 
 
         if (gamepad2.dpad_up) {
-            target += (Math.floor(elapsedTime.seconds())  * 30);
+            target -= 10;
         }
-        elapsedTime.reset();
+
+        if (gamepad2.options) {
+            lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            lift_motor_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            lift_motor_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
 
 
@@ -184,7 +198,7 @@ public class TeleOPTest extends OpMode {
 
     }
     public void lift_up() {
-        target = 240;
+        target = 245;
     }
     public void lift_neutral() {
         target = -16;
