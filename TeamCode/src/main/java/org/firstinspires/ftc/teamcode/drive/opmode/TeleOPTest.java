@@ -87,6 +87,7 @@ public class TeleOPTest extends OpMode {
 
         left_claw.setDirection(Servo.Direction.REVERSE);
 
+
         right_intake.setDirection(Servo.Direction.REVERSE);
 
 
@@ -198,7 +199,7 @@ public class TeleOPTest extends OpMode {
 
     }
     public void lift_up() {
-        target = 245;
+        target = 215;
     }
     public void lift_neutral() {
         target = -16;

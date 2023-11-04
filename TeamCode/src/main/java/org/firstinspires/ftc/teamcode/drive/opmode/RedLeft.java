@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -21,11 +23,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config
+@Autonomous(name = "RedLeft")
 
-@Autonomous(name = "RedRight")
-
-public class RedRight extends LinearOpMode {
+public class RedLeft extends LinearOpMode {
 
     double locationOfProp = 0;
 
@@ -41,127 +41,152 @@ public class RedRight extends LinearOpMode {
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
     public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
 
-    public static int lowH = 100;
+    private PIDController controller;
 
-    public static int lowS = 100;
+    // public static double p=0.0005, i = 0, d=0;
+    public double p = 0.0094, i = 0.04, d=0.0032;
+    public static double f = 0.3;
 
-    public static int lowV = 100;
+    public static int target = 0;
 
-    public static int highH = 180;
+    //private final double ticks_in_degrees = 0;
+    private final double ticks_in_degrees = 22.4;
+    private DcMotorEx lift_right;
+    private DcMotorEx lift_left;
 
-    public static int highS = 255;
 
-    public static int highV = 255;
+    private Servo left_intake;
 
+    private Servo right_intake;
+
+    private Servo right_claw;
+
+    private Servo left_claw;
     @Override
     public void runOpMode() {
 
+        controller = new PIDController(p, i, d);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        lift_right = hardwareMap.get(DcMotorEx.class, "lift_right");
+        lift_left = hardwareMap.get(DcMotorEx.class, "lift_left");
+
+//        left_intake = hardwareMap.get(Servo.class, "left_intake");
+//        right_intake = hardwareMap.get(Servo.class, "right_intake");
+
+        lift_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        lift_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+//        right_claw = hardwareMap.get(Servo.class, "right claw");
+//        left_claw = hardwareMap.get(Servo.class, "left claw");
+//        left_claw.setDirection(Servo.Direction.REVERSE);
+//        right_intake.setDirection(Servo.Direction.REVERSE);
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(-35,-61, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
+
+        // Postion 1 - traj1StrafeLeft, Traj1
+        Trajectory traj1StrafeLeft = drive.trajectoryBuilder(startPose)
+                .strafeLeft(-13)
+                .build();
+
+        Trajectory traj1 = drive.trajectoryBuilder(traj1StrafeLeft.end())
+                .forward(-24)
+                .build();
+
+        Trajectory back = drive.trajectoryBuilder(traj1.end())
+                .back(-6)
+                .build();
+
+        //Postion 2 - Traj2
+        Trajectory traj2 = drive.trajectoryBuilder(startPose)
+                .forward(-34.5)
+                .build();
+
+        Trajectory back1 = drive.trajectoryBuilder(traj2.end())
+                .back(-3)
+                .build();
+
+
+        //Position 3 - traj3StrafeLeft ,traj3 ,traj4
+        Trajectory traj3StrafeLeft = drive.trajectoryBuilder(startPose)
+                .strafeLeft(-12)
+                .build();
+
+        Trajectory traj3 = drive.trajectoryBuilder(traj3StrafeLeft.end())
+                .forward(-28)
+                .build();
+
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
+                .forward(-15)
+                .build();
+
+        Trajectory back2 = drive.trajectoryBuilder(traj4.end())
+                .back(-3)
+                .build();
+
 
         initOpenCV();
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
+
+//        right_claw.setPosition(1);
+//        left_claw.setPosition(1);
+
         sleep(5000);
         getLocationOfProp();
 
-        Pose2d startPose = new Pose2d(12, -60, Math.toRadians(270));
-
-        drive.setPoseEstimate(startPose);
-
-//        Trajectory left1 = drive.trajectoryBuilder(startPose)
-//                .strafeLeft(7)
-//                .build();
-
-
-
-        Trajectory left2 = drive.trajectoryBuilder(startPose)
-                        .forward(-30)
-                                .build();
-
-        Trajectory left3 = drive.trajectoryBuilder(new Pose2d(12, -30), Math.toRadians(180))
-                        .forward(-6)
-                                .build();
-
-        Trajectory left4 = drive.trajectoryBuilder(left3.end())
-                        .forward(12)
-                                .build();
-
-        Trajectory left5 = drive.trajectoryBuilder(left4.end())
-                .strafeRight(28)
-                .build();
-
-        Trajectory left6 = drive.trajectoryBuilder(left5.end())
-                .forward(50)
-                .build();
-
-
-
-        Trajectory mid1 = drive.trajectoryBuilder(startPose)
-                        .forward(-34.5)
-                                .build();
-        Trajectory mid2 = drive.trajectoryBuilder(mid1.end())
-                        .back(-3)
-                                .build();
-
-        Trajectory mid3 = drive.trajectoryBuilder(mid2.end())
-                .forward(33)
-                .build();
-
-        Trajectory mid4 = drive.trajectoryBuilder(mid3.end())
-                .strafeLeft(48)
-                .build();
-
-        Trajectory right1 = drive.trajectoryBuilder(startPose)
-                        .strafeRight(-14)
-                                .build();
-
-        Trajectory right2 = drive.trajectoryBuilder(right1.end())
-                        .forward(-24)
-                                .build();
-
-        Trajectory right3 = drive.trajectoryBuilder(right2.end())
-                        .back(-25)
-                                .build();
-
-        Trajectory right4 = drive.trajectoryBuilder(right3.end())
-                        .strafeLeft(36)
-                                .build();
-
-
-
         waitForStart();
 
+
+//        while (opModeIsActive()) {
+//            controller.setPID(p, i, d);
+//            int armPos = lift_left.getCurrentPosition();
+//            double pid = controller.calculate(armPos, target);
+//            double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+//
+//            double power = pid + ff;
+//
+//            lift_left.setPower(power);
+//            lift_right.setPower(power);
+//            telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
+//            telemetry.addData("Distance in Inch", (getDistance(width)));
+//            telemetry.addData("Location of Prop", locationOfProp);
+//            telemetry.update();
+//
+//            // The OpenCV pipeline automatically processes frames and handles detection
+//        }
+
+//        left_claw.setPosition(1);
+//        right_claw.setPosition(1);
+
+        sleep(1000);
+
+        // target = 100;
+
+        sleep(4000);
+
         if (locationOfProp == 1) {
-            drive.followTrajectory(left2);
-            drive.turn(Math.toRadians(90));
-            drive.followTrajectory(left3);
-            drive.followTrajectory(left4);
-            drive.followTrajectory(left5);
-            drive.followTrajectory(left6);
+            drive.followTrajectory(traj1StrafeLeft);
+            drive.followTrajectory(traj1);
+            drive.followTrajectory(back);
         }
+        if (locationOfProp == 2) {
+            drive.followTrajectory(traj2);
+            drive.followTrajectory(back1);
 
-        if(locationOfProp == 2) {
-            drive.followTrajectory(mid1);
-            drive.followTrajectory(mid2);
-            drive.followTrajectory(mid3);
-            drive.followTrajectory(mid4);
         }
-
-        if(locationOfProp == 3) {
-            drive.followTrajectory(right1);
-            drive.followTrajectory(right2);
-            drive.followTrajectory(right3);
-            drive.followTrajectory(right4);
-        }
-
-        while (opModeIsActive()) {
-            telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
-            telemetry.addData("Distance in Inch", (getDistance(width)));
-            telemetry.addData("Location of Prop", locationOfProp);
-            telemetry.update();
-
-            // The OpenCV pipeline automatically processes frames and handles detection
+        if (locationOfProp == 3) {
+            drive.followTrajectory(traj3StrafeLeft);
+            drive.followTrajectory(traj3);
+            drive.turn(Math.toRadians(-90));
+            drive.followTrajectory(traj4);
+            drive.followTrajectory(back2);
         }
 
         // Release resources
@@ -228,8 +253,8 @@ public class RedRight extends LinearOpMode {
             Mat hsvFrame = new Mat();
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
-            Scalar lowerYellow = new Scalar(lowH, lowS, lowV);
-            Scalar upperYellow = new Scalar(highH, highS, highV);
+            Scalar lowerYellow = new Scalar(100, 100, 100);
+            Scalar upperYellow = new Scalar(180, 255, 255);
 
 
             Mat yellowMask = new Mat();
