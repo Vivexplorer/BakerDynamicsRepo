@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -23,9 +25,9 @@ import java.util.List;
 
 @Config
 
-@Autonomous(name = "RedRight")
+@Autonomous(name = "RedRightToBackdrop")
 
-public class RedRight extends LinearOpMode {
+public class RedRightToBackdrop extends LinearOpMode {
 
     double locationOfProp = 0;
 
@@ -53,55 +55,71 @@ public class RedRight extends LinearOpMode {
 
     public static int highV = 255;
 
+    private Servo right_claw;
+
+
     @Override
     public void runOpMode() {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        DcMotorEx lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
+        DcMotorEx lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
+
+        right_claw = hardwareMap.get(Servo.class, "left claw");
+
+
         initOpenCV();
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
-        sleep(5000);
-        getLocationOfProp();
+
 
         Pose2d startPose = new Pose2d(12, -60, Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
 
-//        Trajectory left1 = drive.trajectoryBuilder(startPose)
-//                .strafeLeft(7)
-//                .build();
+        Trajectory left1 = drive.trajectoryBuilder(startPose)
+                .strafeLeft(5)
+                .build();
 
-
-
-        Trajectory left2 = drive.trajectoryBuilder(startPose)
+        Trajectory left2 = drive.trajectoryBuilder(left1.end())
                         .forward(-30)
                                 .build();
 
-        Trajectory left3 = drive.trajectoryBuilder(new Pose2d(12, -30), Math.toRadians(180))
-                        .forward(-6)
+        Trajectory left3 = drive.trajectoryBuilder(new Pose2d(17, -30), Math.toRadians(180))
+                        .forward(-11)
                                 .build();
 
-        Trajectory left4 = drive.trajectoryBuilder(left3.end())
-                        .forward(12)
+        Trajectory left31 = drive.trajectoryBuilder(left3.end())
+                .forward(5)
+                .build();
+
+
+
+        Trajectory left4 = drive.trajectoryBuilder(left31.end().plus(new Pose2d(0, 0)), Math.toRadians(180))
+                        .strafeRight(5)
                                 .build();
+
+        Trajectory left41 = drive.trajectoryBuilder(left4.end())
+                .forward(-30)
+                .build();
 
         Trajectory left5 = drive.trajectoryBuilder(left4.end())
-                .strafeRight(28)
+                .strafeRight(-28)
                 .build();
 
         Trajectory left6 = drive.trajectoryBuilder(left5.end())
-                .forward(50)
+                .forward(-6)
                 .build();
 
 
 
         Trajectory mid1 = drive.trajectoryBuilder(startPose)
-                        .forward(-34.5)
+                        .forward(-30.9)
                                 .build();
         Trajectory mid2 = drive.trajectoryBuilder(mid1.end())
-                        .back(-3)
+                        .back(-7)
                                 .build();
 
         Trajectory mid3 = drive.trajectoryBuilder(mid2.end())
@@ -128,16 +146,62 @@ public class RedRight extends LinearOpMode {
                         .strafeLeft(36)
                                 .build();
 
+        lift_motor_left.setPower(0);
+        lift_motor_right.setPower(0);
+
+        lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        lift_motor_right.setTargetPosition(0);
+        lift_motor_left.setTargetPosition(0);
+
+        right_claw.setPosition(1);
+
+
+
+
+
 
 
         waitForStart();
 
+        getLocationOfProp();
+        sleep(3000);
+
+
         if (locationOfProp == 1) {
+            drive.followTrajectory(left1);
             drive.followTrajectory(left2);
             drive.turn(Math.toRadians(90));
             drive.followTrajectory(left3);
+
+            lift_motor_right.setTargetPosition(150);
+            lift_motor_left.setTargetPosition(150);
+
+            lift_motor_left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            lift_motor_right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            lift_motor_left.setPower(0.5);
+            lift_motor_right.setPower(0.5);
+
+            drive.followTrajectory(left31);
+
+            drive.turn(Math.toRadians(180));
+
+
             drive.followTrajectory(left4);
+
+            drive.followTrajectory(left41);
+
+            right_claw.setPosition(0.1);
+
             drive.followTrajectory(left5);
+
+            lift_motor_right.setTargetPosition(0);
+            lift_motor_left.setTargetPosition(0);
+            lift_motor_left.setPower(0.5);
+            lift_motor_right.setPower(0.5);
+
             drive.followTrajectory(left6);
         }
 

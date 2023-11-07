@@ -90,11 +90,11 @@ public class BlueRight extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         Trajectory traj1StrafeRight = drive.trajectoryBuilder(startPose)
-                .strafeRight(-11)
+                .strafeRight(-13)
                 .build();
 
         Trajectory traj1 = drive.trajectoryBuilder(traj1StrafeRight.end())
-                .forward(-16)
+                .forward(-18)
                 .build();
 
         Trajectory back = drive.trajectoryBuilder(traj1.end())
@@ -107,7 +107,7 @@ public class BlueRight extends LinearOpMode {
                 .build();
 
         Trajectory back1 = drive.trajectoryBuilder(traj2.end())
-                .back(3)
+                .back(-3)
                 .build();
 
 
@@ -121,7 +121,7 @@ public class BlueRight extends LinearOpMode {
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end().plus(new Pose2d(0,0,Math.toRadians(90))))
-                .forward(-19)
+                .forward(-16)
                 .build();
 
 
@@ -141,10 +141,10 @@ public class BlueRight extends LinearOpMode {
 //        right_claw.setPosition(1);
 //        left_claw.setPosition(1);
 
-        sleep(5000);
-        getLocationOfProp();
-
         waitForStart();
+
+        getLocationOfProp();
+        sleep(3000);
 
 
 //        while (opModeIsActive()) {
@@ -168,11 +168,6 @@ public class BlueRight extends LinearOpMode {
 //        left_claw.setPosition(1);
 //        right_claw.setPosition(1);
 
-        sleep(1000);
-
-        // target = 100;
-
-        sleep(4000);
 
         if (locationOfProp == 3) {
             drive.followTrajectory(traj1StrafeRight);

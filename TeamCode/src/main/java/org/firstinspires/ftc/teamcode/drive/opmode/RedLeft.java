@@ -104,7 +104,7 @@ public class RedLeft extends LinearOpMode {
 
         //Postion 2 - Traj2
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
-                .forward(-34.5)
+                .forward(-30.9)
                 .build();
 
         Trajectory back1 = drive.trajectoryBuilder(traj2.end())
@@ -122,7 +122,7 @@ public class RedLeft extends LinearOpMode {
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
-                .forward(-15)
+                .forward(-15.8)
                 .build();
 
         Trajectory back2 = drive.trajectoryBuilder(traj4.end())
@@ -138,38 +138,12 @@ public class RedLeft extends LinearOpMode {
 //        right_claw.setPosition(1);
 //        left_claw.setPosition(1);
 
-        sleep(5000);
-        getLocationOfProp();
+
 
         waitForStart();
 
-
-//        while (opModeIsActive()) {
-//            controller.setPID(p, i, d);
-//            int armPos = lift_left.getCurrentPosition();
-//            double pid = controller.calculate(armPos, target);
-//            double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
-//
-//            double power = pid + ff;
-//
-//            lift_left.setPower(power);
-//            lift_right.setPower(power);
-//            telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
-//            telemetry.addData("Distance in Inch", (getDistance(width)));
-//            telemetry.addData("Location of Prop", locationOfProp);
-//            telemetry.update();
-//
-//            // The OpenCV pipeline automatically processes frames and handles detection
-//        }
-
-//        left_claw.setPosition(1);
-//        right_claw.setPosition(1);
-
-        sleep(1000);
-
-        // target = 100;
-
-        sleep(4000);
+        getLocationOfProp();
+        sleep(3000);
 
         if (locationOfProp == 1) {
             drive.followTrajectory(traj1StrafeLeft);

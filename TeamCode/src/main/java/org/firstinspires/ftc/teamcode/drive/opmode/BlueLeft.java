@@ -92,24 +92,17 @@ public class BlueLeft extends LinearOpMode {
                 .forward(-21)
                 .build();
         Trajectory traj2Next = drive.trajectoryBuilder(traj2.end())
-                .back(-6)
+                .back(-21)
                 .build();
-        Trajectory traj2Next2 = drive.trajectoryBuilder(traj2Next.end().plus(new Pose2d(0,0,Math.toRadians(90))))
-                .forward(-24)
+        Trajectory traj2Next2 = drive.trajectoryBuilder(traj2Next.end())
+                .strafeLeft(-29)
                 .build();
-        Trajectory traj2Next3 = drive.trajectoryBuilder(traj2Next2.end())
-                .strafeLeft(-15)
-                .build();
-        Trajectory traj2Next4 = drive.trajectoryBuilder(traj2Next3.end())
-                .forward(-10)
-                .build();
+
+
 
         //
 
-        Trajectory traj3 = drive.trajectoryBuilder(startPose)
-                .strafeLeft(-6)
-                .build();
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+        Trajectory traj4 = drive.trajectoryBuilder(startPose)
                 .forward(-30)
                 .build();
         Trajectory traj4Next = drive.trajectoryBuilder(traj4.end())
@@ -122,28 +115,29 @@ public class BlueLeft extends LinearOpMode {
                 .strafeLeft(-24)
                 .build();
         Trajectory traj4Next4 = drive.trajectoryBuilder(traj4Next3.end())
-                .forward(-10)
+                .forward(-16)
                 .build();
 
 
+        Trajectory RightPlaceLeft = drive.trajectoryBuilder(startPose)
+                .strafeLeft(-6)
+                .build();
 
-        Trajectory traj5 = drive.trajectoryBuilder(startPose)
-                .forward(-18)
+        Trajectory traj5 = drive.trajectoryBuilder(RightPlaceLeft.end())
+                .forward(-24)
                 .build();
         Trajectory traj6 = drive.trajectoryBuilder(traj5.end().plus(new Pose2d(0,0, Math.toRadians(-90))))
-                .forward(-3)
+                .forward(-9)
                 .build();
         Trajectory traj6Next2 = drive.trajectoryBuilder(traj6.end())
                 .back(-39)
                 .build();
         Trajectory traj6Next3 = drive.trajectoryBuilder(traj6Next2.end())
-                .strafeRight(-6)
+                .strafeRight(-23)
                 .build();
-        Trajectory traj6Next4 = drive.trajectoryBuilder(traj6Next3.end())
-                .strafeLeft(-30)
-                .build();
-        Trajectory traj6Next5 = drive.trajectoryBuilder(traj6Next4.end())
-                .forward(-8)
+
+        Trajectory traj6Next5 = drive.trajectoryBuilder(traj6Next3.end())
+                .forward(8)
                 .build();
 
 
@@ -156,51 +150,37 @@ public class BlueLeft extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
         //int target = 100;
 
-        sleep(5000);
-        getLocationOfProp();
+
 
 
         waitForStart();
 
-
-
-
-
-
-
-        //lift the arm
-        //drop servo
-
-
-
-
+        getLocationOfProp();
+        sleep(3000);
 
         if (locationOfProp == 1) {
             drive.followTrajectory(traj1);
             drive.followTrajectory(traj2);
             drive.followTrajectory(traj2Next);
-            drive.turn(Math.toRadians(90));
             drive.followTrajectory(traj2Next2);
-            drive.followTrajectory(traj2Next3);
-            drive.followTrajectory(traj2Next4);
+
 
         }
         if (locationOfProp == 2) {
-            drive.followTrajectory(traj3);
             drive.followTrajectory(traj4);
             drive.followTrajectory(traj4Next);
             drive.followTrajectory(traj4Next2);
             drive.followTrajectory(traj4Next3);
-            drive.followTrajectory(traj2Next4);
+            drive.followTrajectory(traj4Next4);
 
         }
         if (locationOfProp == 3) {
+            drive.followTrajectory(RightPlaceLeft);
             drive.followTrajectory(traj5);
-            drive.turn(-90);
+            drive.turn(Math.toRadians(-90));
             drive.followTrajectory(traj6);
             drive.followTrajectory(traj6Next2);
             drive.followTrajectory(traj6Next3);
-            drive.followTrajectory(traj6Next4);
             drive.followTrajectory(traj6Next5);
 
         }
