@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-@Disabled
 
 @Config
 
@@ -21,8 +20,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class PIDF_Arm_Tuning extends LinearOpMode {
     private PIDController controller;
 
-    public static double p = 0.0144, i = 0.02, d=0.0032;
-    public static double f = 0.3;
+    public static double p = 0.0076, i = 0.06, d=0.003;
+
+    public static double f = 0.27;
 
     public static int target = 0;
 

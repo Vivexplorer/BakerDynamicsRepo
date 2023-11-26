@@ -25,9 +25,9 @@ import java.util.List;
 
 @Config
 
-@Autonomous(name = "RedRightToBackdrop")
+@Autonomous(name = "RedRIght")
 
-public class RedRightToBackdrop extends LinearOpMode {
+public class RedRIght extends LinearOpMode {
 
     double locationOfProp = 0;
 
@@ -97,7 +97,7 @@ public class RedRightToBackdrop extends LinearOpMode {
 
 
 
-        Trajectory left4 = drive.trajectoryBuilder(left31.end().plus(new Pose2d(0, 0)), Math.toRadians(180))
+        Trajectory left4 = drive.trajectoryBuilder(left31.end().plus(new Pose2d(0,0, Math.toRadians(-180))))
                         .strafeRight(5)
                                 .build();
 
@@ -105,33 +105,45 @@ public class RedRightToBackdrop extends LinearOpMode {
                 .forward(-30)
                 .build();
 
-        Trajectory left5 = drive.trajectoryBuilder(left4.end())
-                .strafeRight(-28)
+        Trajectory left5 = drive.trajectoryBuilder(left41.end())
+                .strafeRight(-32)
                 .build();
 
         Trajectory left6 = drive.trajectoryBuilder(left5.end())
-                .forward(-6)
+                .forward(-9)
                 .build();
 
 
 
         Trajectory mid1 = drive.trajectoryBuilder(startPose)
-                        .forward(-30.9)
+                        .forward(-33.9)
                                 .build();
         Trajectory mid2 = drive.trajectoryBuilder(mid1.end())
-                        .back(-7)
+                        .back(-10)
                                 .build();
 
-        Trajectory mid3 = drive.trajectoryBuilder(mid2.end())
-                .forward(33)
+        Trajectory mid3 = drive.trajectoryBuilder(mid2.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
+                .forward(-37)
                 .build();
 
         Trajectory mid4 = drive.trajectoryBuilder(mid3.end())
-                .strafeLeft(48)
+                .strafeLeft(26)
                 .build();
 
+        Trajectory mid5 = drive.trajectoryBuilder(mid4.end())
+                .back(5)
+                .build();
+
+//        Trajectory mid3 = drive.trajectoryBuilder(mid2.end())
+//                .forward(33)
+//                .build();
+//
+//        Trajectory mid4 = drive.trajectoryBuilder(mid3.end())
+//                .strafeLeft(48)
+//                .build();
+
         Trajectory right1 = drive.trajectoryBuilder(startPose)
-                        .strafeRight(-14)
+                        .strafeRight(-11)
                                 .build();
 
         Trajectory right2 = drive.trajectoryBuilder(right1.end())
@@ -139,23 +151,40 @@ public class RedRightToBackdrop extends LinearOpMode {
                                 .build();
 
         Trajectory right3 = drive.trajectoryBuilder(right2.end())
-                        .back(-25)
-                                .build();
+                .back(-7)
+                        .build();
 
-        Trajectory right4 = drive.trajectoryBuilder(right3.end())
-                        .strafeLeft(36)
-                                .build();
+        Trajectory right4 = drive.trajectoryBuilder(right3.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
+                .back(25)
+                .build();
 
-        lift_motor_left.setPower(0);
-        lift_motor_right.setPower(0);
+        Trajectory right5 = drive.trajectoryBuilder(right4.end())
+                .strafeLeft(20)
+                        .build();
 
-        lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        Trajectory right6 = drive.trajectoryBuilder(right5.end())
+                .back(6)
+                        .build();
 
-        lift_motor_right.setTargetPosition(0);
-        lift_motor_left.setTargetPosition(0);
 
-        right_claw.setPosition(1);
+//        Trajectory right3 = drive.trajectoryBuilder(right2.end())
+//                        .back(-25)
+//                                .build();
+//
+//        Trajectory right4 = drive.trajectoryBuilder(right3.end())
+//                        .strafeLeft(36)
+//                                .build();
+
+//        lift_motor_left.setPower(0);
+//        lift_motor_right.setPower(0);
+//
+//        lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        lift_motor_right.setTargetPosition(0);
+//        lift_motor_left.setTargetPosition(0);
+
+//        right_claw.setPosition(1);
 
 
 
@@ -175,32 +204,28 @@ public class RedRightToBackdrop extends LinearOpMode {
             drive.turn(Math.toRadians(90));
             drive.followTrajectory(left3);
 
-            lift_motor_right.setTargetPosition(150);
-            lift_motor_left.setTargetPosition(150);
-
-            lift_motor_left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            lift_motor_right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            lift_motor_left.setPower(0.5);
-            lift_motor_right.setPower(0.5);
+//            lift_motor_right.setTargetPosition(150);
+//            lift_motor_left.setTargetPosition(150);
+//
+//            lift_motor_left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//            lift_motor_right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//
+//            lift_motor_left.setPower(0.5);
+//            lift_motor_right.setPower(0.5);
 
             drive.followTrajectory(left31);
 
-            drive.turn(Math.toRadians(180));
+            drive.turn(Math.toRadians(-180));
 
 
             drive.followTrajectory(left4);
 
             drive.followTrajectory(left41);
 
-            right_claw.setPosition(0.1);
+//            right_claw.setPosition(0.1);
 
             drive.followTrajectory(left5);
 
-            lift_motor_right.setTargetPosition(0);
-            lift_motor_left.setTargetPosition(0);
-            lift_motor_left.setPower(0.5);
-            lift_motor_right.setPower(0.5);
 
             drive.followTrajectory(left6);
         }
@@ -208,15 +233,21 @@ public class RedRightToBackdrop extends LinearOpMode {
         if(locationOfProp == 2) {
             drive.followTrajectory(mid1);
             drive.followTrajectory(mid2);
+            drive.turn(Math.toRadians(-90));
             drive.followTrajectory(mid3);
             drive.followTrajectory(mid4);
+            drive.followTrajectory(mid5);
         }
 
         if(locationOfProp == 3) {
             drive.followTrajectory(right1);
             drive.followTrajectory(right2);
             drive.followTrajectory(right3);
+            drive.turn(Math.toRadians(-90));
             drive.followTrajectory(right4);
+            drive.followTrajectory(right5);
+            drive.followTrajectory(right6);
+
         }
 
         while (opModeIsActive()) {

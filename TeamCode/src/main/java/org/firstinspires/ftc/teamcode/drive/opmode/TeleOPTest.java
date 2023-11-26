@@ -25,11 +25,11 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.Traject
 public class TeleOPTest extends OpMode {
     private PIDController controller;
 
-    public double p = 0.0094, i = 0.05, d=0.0032;
+    public static double p = 0.0076, i = 0.06, d=0.003;
 
-    public double f = 0.3;
+    public static double f = 0.27;
 
-    public static int target = -10;
+    public static int target = -13;
 
     public static double MOTOR_POWERS;
 
@@ -47,6 +47,8 @@ public class TeleOPTest extends OpMode {
 
     private Servo left_claw;
 
+    private Servo airplanelauncher;
+
 
 
 
@@ -61,6 +63,8 @@ public class TeleOPTest extends OpMode {
 
     @Override
     public void init() {
+
+        
         drive = new SampleMecanumDrive(hardwareMap);
 
         lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
@@ -84,6 +88,8 @@ public class TeleOPTest extends OpMode {
 
         lift_motor_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lift_motor_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        airplanelauncher = hardwareMap.get(Servo.class, "airplanelauncher");
 
         left_claw.setDirection(Servo.Direction.REVERSE);
 
@@ -159,9 +165,13 @@ public class TeleOPTest extends OpMode {
             left_claw.setPosition(1);
         }
 
+        if(gamepad2.share) {
+            airplanelauncher.setPosition(1);
+        }
+
 
         if (gamepad2.dpad_up) {
-            target -= 10;
+            target -= 7;
         }
 
         if (gamepad2.options) {
@@ -188,9 +198,9 @@ public class TeleOPTest extends OpMode {
         }else if (gamepad1.right_stick_x<0) {
             drive.setMotorPowers(MOTOR_POWERS,-MOTOR_POWERS,MOTOR_POWERS,-MOTOR_POWERS);
         }else if (gamepad1.dpad_up) {
-            drive.setMotorPowers(0.1, 0.1, 0.1, 0.1);
+            drive.setMotorPowers(-0.2, -0.2, -0.2, -0.2);
         }else if (gamepad1.dpad_down) {
-            drive.setMotorPowers(-0.1, -0.1, -0.1, -0.1);
+            drive.setMotorPowers(0.2, 0.2, 0.2, 0.2);
         }
         else {
             drive.setMotorPowers(0,0,0,0);
@@ -199,10 +209,10 @@ public class TeleOPTest extends OpMode {
 
     }
     public void lift_up() {
-        target = 215;
+        target = 230;
     }
     public void lift_neutral() {
-        target = -16;
+        target = -13;
     }
 
     public void intake_up() {
