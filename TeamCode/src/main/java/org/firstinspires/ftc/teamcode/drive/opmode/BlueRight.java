@@ -80,10 +80,10 @@ public class BlueRight extends LinearOpMode {
         lift_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        right_claw = hardwareMap.get(Servo.class, "right claw");
-        left_claw = hardwareMap.get(Servo.class, "left claw");
-        left_claw.setDirection(Servo.Direction.REVERSE);
-        right_intake.setDirection(Servo.Direction.REVERSE);
+//        right_claw = hardwareMap.get(Servo.class, "right claw");
+//        left_claw = hardwareMap.get(Servo.class, "left claw");
+//        left_claw.setDirection(Servo.Direction.REVERSE);
+//        right_intake.setDirection(Servo.Direction.REVERSE);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-35,61, Math.toRadians(270));

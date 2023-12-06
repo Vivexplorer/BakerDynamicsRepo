@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -55,7 +56,7 @@ public class RedRIght extends LinearOpMode {
 
     public static int highV = 255;
 
-    private Servo right_claw;
+    private Servo basket;
 
 
     @Override
@@ -66,7 +67,10 @@ public class RedRIght extends LinearOpMode {
         DcMotorEx lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         DcMotorEx lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
 
-        right_claw = hardwareMap.get(Servo.class, "left claw");
+        Servo left_intake = hardwareMap.get(Servo.class, "left_intake");
+        Servo right_intake = hardwareMap.get(Servo.class, "right_intake");
+
+        basket = hardwareMap.get(Servo.class, "basket");
 
 
         initOpenCV();
@@ -98,15 +102,24 @@ public class RedRIght extends LinearOpMode {
 
 
         Trajectory left4 = drive.trajectoryBuilder(left31.end().plus(new Pose2d(0,0, Math.toRadians(-180))))
-                        .strafeRight(5)
+                        .strafeRight(2)
                                 .build();
 
         Trajectory left41 = drive.trajectoryBuilder(left4.end())
-                .forward(-30)
+                .forward(-34)
                 .build();
 
-        Trajectory left5 = drive.trajectoryBuilder(left41.end())
-                .strafeRight(-32)
+        Trajectory left415 = drive.trajectoryBuilder(left41.end())
+                .forward(-3)
+                    .build();
+
+
+        Trajectory left42 = drive.trajectoryBuilder(left415.end())
+                .forward(6)
+                .build();
+
+        Trajectory left5 = drive.trajectoryBuilder(left42.end())
+                .strafeRight(5)
                 .build();
 
         Trajectory left6 = drive.trajectoryBuilder(left5.end())
@@ -122,17 +135,35 @@ public class RedRIght extends LinearOpMode {
                         .back(-10)
                                 .build();
 
-        Trajectory mid3 = drive.trajectoryBuilder(mid2.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
-                .forward(-37)
+        Trajectory mid3 = drive.trajectoryBuilder(mid2.end().plus(new Pose2d(0,0,Math.toRadians(-93))))
+                .forward(-32)
                 .build();
 
-        Trajectory mid4 = drive.trajectoryBuilder(mid3.end())
-                .strafeLeft(26)
+
+
+        Trajectory mid315 = drive.trajectoryBuilder(mid3.end())
+                .strafeRight(4)
                 .build();
 
-        Trajectory mid5 = drive.trajectoryBuilder(mid4.end())
-                .back(5)
+        Trajectory mid31 = drive.trajectoryBuilder(mid315.end())
+                .forward(-9)
                 .build();
+
+//        Trajectory mid305 = drive.trajectoryBuilder(mid31.end())
+//                .strafeRight(4)
+//                .build();
+
+        Trajectory mid32 = drive.trajectoryBuilder(mid31.end())
+                .forward(4)
+                .build();
+
+        Trajectory mid4 = drive.trajectoryBuilder(mid32.end())
+                .strafeRight(6)
+                .build();
+
+//        Trajectory mid5 = drive.trajectoryBuilder(mid4.end())
+//                .back(5)
+//                .build();
 
 //        Trajectory mid3 = drive.trajectoryBuilder(mid2.end())
 //                .forward(33)
@@ -151,20 +182,32 @@ public class RedRIght extends LinearOpMode {
                                 .build();
 
         Trajectory right3 = drive.trajectoryBuilder(right2.end())
-                .back(-7)
+                .back(-10)
                         .build();
 
         Trajectory right4 = drive.trajectoryBuilder(right3.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
-                .back(25)
+                .back(22)
                 .build();
 
-        Trajectory right5 = drive.trajectoryBuilder(right4.end())
-                .strafeLeft(20)
+        Trajectory right405 = drive.trajectoryBuilder(right4.end())
+                .strafeRight(3)
+                .build();
+
+        Trajectory right407 = drive.trajectoryBuilder(right405.end())
+                .back(6)
+                .build();
+
+        Trajectory right41 = drive.trajectoryBuilder(right407.end())
+                .forward(4)
+                .build();
+
+        Trajectory right5 = drive.trajectoryBuilder(right41.end())
+                .strafeRight(6)
                         .build();
 
-        Trajectory right6 = drive.trajectoryBuilder(right5.end())
-                .back(6)
-                        .build();
+//        Trajectory right6 = drive.trajectoryBuilder(right5.end())
+//                .back(6)
+//                        .build();
 
 
 //        Trajectory right3 = drive.trajectoryBuilder(right2.end())
@@ -178,8 +221,8 @@ public class RedRIght extends LinearOpMode {
 //        lift_motor_left.setPower(0);
 //        lift_motor_right.setPower(0);
 //
-//        lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 //
 //        lift_motor_right.setTargetPosition(0);
 //        lift_motor_left.setTargetPosition(0);
@@ -204,14 +247,8 @@ public class RedRIght extends LinearOpMode {
             drive.turn(Math.toRadians(90));
             drive.followTrajectory(left3);
 
-//            lift_motor_right.setTargetPosition(150);
-//            lift_motor_left.setTargetPosition(150);
-//
-//            lift_motor_left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            lift_motor_right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//
-//            lift_motor_left.setPower(0.5);
-//            lift_motor_right.setPower(0.5);
+
+
 
             drive.followTrajectory(left31);
 
@@ -222,21 +259,100 @@ public class RedRIght extends LinearOpMode {
 
             drive.followTrajectory(left41);
 
+            lift_motor_left.setTargetPosition(105);
+            lift_motor_right.setTargetPosition(105);
+
+            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
+
+
+
+
 //            right_claw.setPosition(0.1);
+
+
+
+            drive.followTrajectory(left415);
+
+            basket.setPosition(0.5);
+
+            sleep(3000);
+
+            drive.followTrajectory(left42);
+
+            basket.setPosition(0);
+            sleep(1000);
+            left_intake.setPosition(0.7);
+            right_intake.setPosition(0.7);
+
+
+
+            lift_motor_left.setTargetPosition(0);
+            lift_motor_right.setTargetPosition(0);
+
+//            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            lift_motor_right.setPower(0.5);
+            lift_motor_left.setPower(0.5);
+
+
+
 
             drive.followTrajectory(left5);
 
 
-            drive.followTrajectory(left6);
+
+
+//            drive.followTrajectory(left6);
         }
 
         if(locationOfProp == 2) {
             drive.followTrajectory(mid1);
             drive.followTrajectory(mid2);
-            drive.turn(Math.toRadians(-90));
+            drive.turn(Math.toRadians(-93));
             drive.followTrajectory(mid3);
+
+            drive.followTrajectory(mid315);
+
+
+            lift_motor_left.setTargetPosition(105);
+            lift_motor_right.setTargetPosition(105);
+
+            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
+            sleep(2000);
+
+
+            drive.followTrajectory(mid31);
+
+
+            basket.setPosition(0.5);
+
+            sleep(4000);
+
+            drive.followTrajectory(mid32);
+            basket.setPosition(0);
+
+            left_intake.setPosition(0.7);
+            right_intake.setPosition(0.7);
+
+            lift_motor_left.setTargetPosition(0);
+            lift_motor_right.setTargetPosition(0);
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
             drive.followTrajectory(mid4);
-            drive.followTrajectory(mid5);
+//            drive.followTrajectory(mid5);
         }
 
         if(locationOfProp == 3) {
@@ -244,9 +360,47 @@ public class RedRIght extends LinearOpMode {
             drive.followTrajectory(right2);
             drive.followTrajectory(right3);
             drive.turn(Math.toRadians(-90));
+
+            lift_motor_left.setTargetPosition(105);
+            lift_motor_right.setTargetPosition(105);
+
+            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
+            sleep(3000);
+
             drive.followTrajectory(right4);
+
+            drive.followTrajectory(right405);
+
+            drive.followTrajectory(right407);
+
+            sleep(1000);
+            basket.setPosition(0.5);
+            sleep(2000);
+
+            drive.followTrajectory(right41);
+
+
+            basket.setPosition(0);
+
+            left_intake.setPosition(0.7);
+            right_intake.setPosition(0.7);
+
+            lift_motor_left.setTargetPosition(0);
+            lift_motor_right.setTargetPosition(0);
+
+
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
+
             drive.followTrajectory(right5);
-            drive.followTrajectory(right6);
+//            drive.followTrajectory(right6);
 
         }
 

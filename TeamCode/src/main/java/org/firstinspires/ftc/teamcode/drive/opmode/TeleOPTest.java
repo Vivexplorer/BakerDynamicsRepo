@@ -43,17 +43,26 @@ public class TeleOPTest extends OpMode {
 
     private DcMotorEx intake;
 
-    private Servo right_claw;
+//    private Servo right_claw;
+//
+//    private Servo left_claw;
 
-    private Servo left_claw;
+    private Servo basket;
 
     private Servo airplanelauncher;
+
+    private double left_intake_position;
+    private double right_intake_position;
+
+    private DcMotorEx hanging;
 
 
 
 
 
     SampleMecanumDrive drive ;
+
+    private boolean forwardorbackward;
 
     ElapsedTime elapsedTime = new ElapsedTime();
 
@@ -70,11 +79,13 @@ public class TeleOPTest extends OpMode {
         lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
 
+        hanging = hardwareMap.get(DcMotorEx.class, "hanging");
+
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
 
-        right_claw = hardwareMap.get(Servo.class, "left claw");
-        left_claw = hardwareMap.get(Servo.class, "right claw");
+//        right_claw = hardwareMap.get(Servo.class, "left claw");
+//        left_claw = hardwareMap.get(Servo.class, "right claw");
 
         controller = new PIDController(p, i, d);
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -91,16 +102,20 @@ public class TeleOPTest extends OpMode {
 
         airplanelauncher = hardwareMap.get(Servo.class, "airplanelauncher");
 
-        left_claw.setDirection(Servo.Direction.REVERSE);
+//        left_claw.setDirection(Servo.Direction.REVERSE);
 
 
         right_intake.setDirection(Servo.Direction.REVERSE);
 
+        basket = hardwareMap.get(Servo.class, "basket");
 
 
-        MOTOR_POWERS = 0.55;
+
+        MOTOR_POWERS = 0.7;
 
         target = -13;
+
+        forwardorbackward = false;
 
 
 
@@ -111,6 +126,10 @@ public class TeleOPTest extends OpMode {
     }
     @Override
     public void loop() {
+
+        left_intake_position = left_intake.getPosition();
+
+        right_intake_position = right_intake.getPosition();
 
 
         controller.setPID(p, i, d);
@@ -128,23 +147,42 @@ public class TeleOPTest extends OpMode {
         telemetry.addData("target", target);
         telemetry.addData("rightArmPosition", lift_motor_right.getCurrentPosition());
         telemetry.addData("leftArmPosition", lift_motor_left.getCurrentPosition());
+        telemetry.addData("leftintake", left_intake_position);
+        telemetry.addData("rightintake", right_intake_position);
+
+
         telemetry.update();
+
+//        if (left_intake_position < 1 && right_intake_position <1) {
+//            intake.setPower(0);
+//        }else if (gamepad1.x) {
+//            intake.setPower(-0.7);
+//        }else if (gamepad1.b) {
+//            intake.setPower(0.7);
+//        }else {
+//            intake.setPower(0);
+//        }
+
+        if (left_intake_position > 0.55&&right_intake_position> 0.55&& gamepad1.b){
+            intake.setPower(0.65);
+        }else if (left_intake_position>0.55&&right_intake_position>0.55&& gamepad1.x){
+            intake.setPower(-0.65);
+        }else{
+            intake.setPower(0);
+        }
+
+
+
 
         if (gamepad2.a) {
             lift_up();
         }else if (gamepad2.y) {
-            left_claw.setPosition(0.1);
-            right_claw.setPosition(0.1);
+            basket.setPosition(0);
+//            left_claw.setPosition(0.1);
+//            right_claw.setPosition(0.1);
             lift_neutral();
         }
 
-        if (gamepad1.x) {
-            intake.setPower(-1.0);
-        }else if (gamepad1.b) {
-            intake.setPower(1);
-        }else {
-            intake.setPower(0);
-        }
 
         if (gamepad1.dpad_left) {
             intake_up();
@@ -153,25 +191,61 @@ public class TeleOPTest extends OpMode {
         }
 
         if (gamepad2.left_bumper) {
-            left_claw.setPosition(0.1);
-        }
+            basket.setPosition(0.4);
 
+        }
         if (gamepad2.right_bumper) {
-            right_claw.setPosition(0.1);
+            basket.setPosition(0.5);
+        }
+        if (gamepad2.dpad_right) {
+            basket.setPosition(0.1);
         }
 
         if (gamepad2.dpad_down) {
-            right_claw.setPosition(1);
-            left_claw.setPosition(1);
+            target -= 7;
         }
 
+        if (forwardorbackward = false) {
+            MOTOR_POWERS = 0.7;
+            if(gamepad1.left_stick_button) {
+                forwardorbackward = true;
+            }
+        }else if (forwardorbackward = true) {
+            MOTOR_POWERS = 0.7;
+            if(gamepad1.left_stick_button) {
+                forwardorbackward = false;
+            }
+        }
+
+
+
+//        if (gamepad2.left_bumper) {
+//            left_claw.setPosition(0.1);
+//        }
+//
+//        if (gamepad2.right_bumper) {
+//            right_claw.setPosition(0.1);
+//        }
+//
+//        if (gamepad2.dpad_down) {
+//            right_claw.setPosition(1);
+//            left_claw.setPosition(1);
+//        }
+
         if(gamepad2.share) {
-            airplanelauncher.setPosition(1);
+            airplanelauncher.setPosition(0.8);
+        }
+
+        if (gamepad2.left_stick_button && gamepad2.right_stick_button) {
+            left_intake.setPosition(0.5);
+            right_intake.setPosition(0.5);
+            target = 15;
+            hanging.setPower(1);
         }
 
 
         if (gamepad2.dpad_up) {
-            target -= 7;
+            target += 7;
         }
 
         if (gamepad2.options) {
@@ -185,19 +259,31 @@ public class TeleOPTest extends OpMode {
 
 
 
-        if (gamepad1.left_stick_y>0) {
+        if (gamepad1.left_stick_y>0.5) {
             drive.setMotorPowers(MOTOR_POWERS,MOTOR_POWERS,MOTOR_POWERS,MOTOR_POWERS);//forward
-        }else if (gamepad1.left_stick_y<0) {
+        }else if (gamepad1.left_stick_y<-0.5) {
             drive.setMotorPowers(-MOTOR_POWERS,-MOTOR_POWERS,-MOTOR_POWERS,-MOTOR_POWERS);//backward
-        }else if (gamepad1.left_stick_x>0) {
+        }else if (gamepad1.left_stick_x>0.5) {
             drive.setMotorPowers(-MOTOR_POWERS, -MOTOR_POWERS, MOTOR_POWERS, MOTOR_POWERS);
-        }else if(gamepad1.left_stick_x<0) {
+        }else if(gamepad1.left_stick_x<-0.5) {
             drive.setMotorPowers(MOTOR_POWERS, MOTOR_POWERS, -MOTOR_POWERS, -MOTOR_POWERS);
-        }else if (gamepad1.right_stick_x>0) {
+        }else if (gamepad1.right_stick_x>0.5) {
             drive.setMotorPowers(-MOTOR_POWERS,MOTOR_POWERS,-MOTOR_POWERS,MOTOR_POWERS);
-        }else if (gamepad1.right_stick_x<0) {
+        }else if (gamepad1.right_stick_x<-0.5) {
             drive.setMotorPowers(MOTOR_POWERS,-MOTOR_POWERS,MOTOR_POWERS,-MOTOR_POWERS);
-        }else if (gamepad1.dpad_up) {
+        }else if (gamepad1.left_stick_y>0&&gamepad1.left_stick_y<0.5) {
+            drive.setMotorPowers((MOTOR_POWERS/2),(MOTOR_POWERS/2),(MOTOR_POWERS/2),(MOTOR_POWERS/2));//forward
+        }else if (gamepad1.left_stick_y<0&&gamepad1.left_stick_y>-0.5) {
+            drive.setMotorPowers((-MOTOR_POWERS/2),(-MOTOR_POWERS/2),(-MOTOR_POWERS/2),(-MOTOR_POWERS/2));//backward
+        }else if (gamepad1.left_stick_y>0&&gamepad1.left_stick_y<0.5) {
+            drive.setMotorPowers((-MOTOR_POWERS/2), (-MOTOR_POWERS/2), (MOTOR_POWERS/2), (MOTOR_POWERS/2));
+        }else if(gamepad1.left_stick_y<0&&gamepad1.left_stick_y>-0.5) {
+            drive.setMotorPowers((MOTOR_POWERS/2), (MOTOR_POWERS/2), (-MOTOR_POWERS/2), (-MOTOR_POWERS/2));
+        }else if (gamepad1.left_stick_y>0&&gamepad1.left_stick_y<0.5) {
+            drive.setMotorPowers((-MOTOR_POWERS/2),(MOTOR_POWERS/2),(-MOTOR_POWERS/2),(MOTOR_POWERS/2));
+        }else if (gamepad1.left_stick_y<0&&gamepad1.left_stick_y>-0.5) {
+            drive.setMotorPowers((MOTOR_POWERS/2), (-MOTOR_POWERS/2), (MOTOR_POWERS/2), (-MOTOR_POWERS/2));
+        } else if (gamepad1.dpad_up) {
             drive.setMotorPowers(-0.2, -0.2, -0.2, -0.2);
         }else if (gamepad1.dpad_down) {
             drive.setMotorPowers(0.2, 0.2, 0.2, 0.2);
@@ -209,7 +295,7 @@ public class TeleOPTest extends OpMode {
 
     }
     public void lift_up() {
-        target = 230;
+        target = 220;
     }
     public void lift_neutral() {
         target = -13;
@@ -220,7 +306,7 @@ public class TeleOPTest extends OpMode {
         right_intake.setPosition(0.5);
     }
     public void intake_down() {
-        left_intake.setPosition(1);
-        right_intake.setPosition(1);
+        left_intake.setPosition(0.7);
+        right_intake.setPosition(0.7);
     }
 }

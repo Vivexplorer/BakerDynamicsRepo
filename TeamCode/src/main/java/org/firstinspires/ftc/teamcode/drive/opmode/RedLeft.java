@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -51,8 +52,8 @@ public class RedLeft extends LinearOpMode {
 
     //private final double ticks_in_degrees = 0;
     private final double ticks_in_degrees = 22.4;
-    private DcMotorEx lift_right;
-    private DcMotorEx lift_left;
+    private DcMotorEx lift_motor_left;
+    private DcMotorEx lift_motor_right;
 
 
     private Servo left_intake;
@@ -62,23 +63,26 @@ public class RedLeft extends LinearOpMode {
     private Servo right_claw;
 
     private Servo left_claw;
+
+    private Servo basket;
     @Override
     public void runOpMode() {
 
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        lift_right = hardwareMap.get(DcMotorEx.class, "lift_right");
-        lift_left = hardwareMap.get(DcMotorEx.class, "lift_left");
+        lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
+        lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
 
-//        left_intake = hardwareMap.get(Servo.class, "left_intake");
-//        right_intake = hardwareMap.get(Servo.class, "right_intake");
+        left_intake = hardwareMap.get(Servo.class, "left_intake");
+        right_intake = hardwareMap.get(Servo.class, "right_intake");
 
-        lift_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lift_right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        basket = hardwareMap.get(Servo.class, "basket");
 
-        lift_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lift_left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 //        right_claw = hardwareMap.get(Servo.class, "right claw");
 //        left_claw = hardwareMap.get(Servo.class, "left claw");
@@ -102,6 +106,41 @@ public class RedLeft extends LinearOpMode {
                 .back(-6)
                 .build();
 
+        Trajectory right1 = drive.trajectoryBuilder(back.end())
+                .strafeRight(14)
+                .build();
+
+        Trajectory right2 = drive.trajectoryBuilder(right1.end())
+                .forward(-20)
+                .build();
+
+        Trajectory right3 = drive.trajectoryBuilder(right2.end().plus(new Pose2d(0,0,Math.toRadians(-93))))
+                .strafeRight(17)
+                .build();
+
+        Trajectory right31 = drive.trajectoryBuilder(right3.end())
+                .forward(-108)
+                .build();
+
+        Trajectory right4 = drive.trajectoryBuilder(right31.end())
+                .strafeLeft(25)
+                .build();
+
+        Trajectory right5 = drive.trajectoryBuilder(right4.end())
+                .forward(-6)
+                .build();
+
+        Trajectory right6 = drive.trajectoryBuilder(right5.end())
+                .forward(5)
+                .build();
+
+        Trajectory right7 = drive.trajectoryBuilder(right6.end())
+                .strafeRight(5)
+                .build();
+
+
+
+
         //Postion 2 - Traj2
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
                 .forward(-30.9)
@@ -121,13 +160,17 @@ public class RedLeft extends LinearOpMode {
                 .forward(-28)
                 .build();
 
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end().plus(new Pose2d(0,0,Math.toRadians(90))))
                 .forward(-15.8)
                 .build();
 
         Trajectory back2 = drive.trajectoryBuilder(traj4.end())
                 .back(-3)
                 .build();
+
+
+
+
 
 
         initOpenCV();
@@ -143,12 +186,72 @@ public class RedLeft extends LinearOpMode {
         waitForStart();
 
         getLocationOfProp();
-        sleep(3000);
+        sleep(1000);
 
         if (locationOfProp == 1) {
             drive.followTrajectory(traj1StrafeLeft);
             drive.followTrajectory(traj1);
             drive.followTrajectory(back);
+            drive.followTrajectory(right1);
+
+            lift_motor_left.setTargetPosition(105);
+            lift_motor_right.setTargetPosition(105);
+
+            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
+            sleep(3000);
+
+            left_intake.setPosition(0.7);
+            right_intake.setPosition(0.7);
+
+            sleep(1000);
+
+            lift_motor_left.setTargetPosition(0);
+            lift_motor_right.setTargetPosition(0);
+
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
+            drive.followTrajectory(right2);
+
+            drive.turn(Math.toRadians(-93));
+
+            drive.followTrajectory(right3);
+
+            drive.followTrajectory(right31);
+            drive.followTrajectory(right4);
+
+            lift_motor_left.setTargetPosition(150);
+            lift_motor_right.setTargetPosition(150);
+
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
+            drive.followTrajectory(right5);
+
+            sleep(3000);
+
+            basket.setPosition(0.5);
+
+            sleep(3000);
+
+            drive.followTrajectory(right6);
+            basket.setPosition(0);
+            lift_motor_left.setTargetPosition(0);
+            lift_motor_right.setTargetPosition(0);
+
+
+            lift_motor_right.setPower(0.7);
+            lift_motor_left.setPower(0.7);
+
+            drive.followTrajectory(right7);
+
         }
         if (locationOfProp == 2) {
             drive.followTrajectory(traj2);
