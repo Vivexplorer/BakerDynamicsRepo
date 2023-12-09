@@ -51,10 +51,12 @@ public class TeleOPTest extends OpMode {
 
     private Servo airplanelauncher;
 
+    private Servo armangle;
+
     private double left_intake_position;
     private double right_intake_position;
 
-    private DcMotorEx hanging;
+//    private DcMotorEx hanging;
 
 
 
@@ -79,7 +81,9 @@ public class TeleOPTest extends OpMode {
         lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
 
-        hanging = hardwareMap.get(DcMotorEx.class, "hanging");
+        armangle = hardwareMap.get(Servo.class, "ArmAngleServo");
+
+//        hanging = hardwareMap.get(DcMotorEx.class, "hanging");
 
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
@@ -171,6 +175,13 @@ public class TeleOPTest extends OpMode {
             intake.setPower(0);
         }
 
+        if (gamepad2.dpad_left) {
+            armangle.setPosition(0.5);
+        }
+        if (gamepad2.dpad_right) {
+            armangle.setPosition(1);
+        }
+
 
 
 
@@ -197,7 +208,7 @@ public class TeleOPTest extends OpMode {
         if (gamepad2.right_bumper) {
             basket.setPosition(0.5);
         }
-        if (gamepad2.dpad_right) {
+        if (gamepad2.b) {
             basket.setPosition(0.1);
         }
 
@@ -236,12 +247,12 @@ public class TeleOPTest extends OpMode {
             airplanelauncher.setPosition(0.8);
         }
 
-        if (gamepad2.left_stick_button && gamepad2.right_stick_button) {
-            left_intake.setPosition(0.5);
-            right_intake.setPosition(0.5);
-            target = 15;
-            hanging.setPower(1);
-        }
+//        if (gamepad2.left_stick_button && gamepad2.right_stick_button) {
+//            left_intake.setPosition(0.5);
+//            right_intake.setPosition(0.5);
+//            target = 15;
+//            hanging.setPower(1);
+//        }
 
 
         if (gamepad2.dpad_up) {

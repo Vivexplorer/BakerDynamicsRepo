@@ -103,7 +103,7 @@ public class BlueRight extends LinearOpMode {
 
         //Postion 2 - Traj2
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
-                .forward(-30.5)
+                .forward(-33)
                 .build();
 
         Trajectory back1 = drive.trajectoryBuilder(traj2.end())

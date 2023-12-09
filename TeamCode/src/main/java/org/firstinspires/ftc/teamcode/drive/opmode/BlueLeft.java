@@ -3,15 +3,24 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
@@ -33,6 +42,8 @@ public class BlueLeft extends LinearOpMode {
     double cY = 0;
     double width = 0;
 
+
+
     private OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
     private static final int CAMERA_WIDTH = 1280; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 720; // height of wanted camera resolution
@@ -41,12 +52,10 @@ public class BlueLeft extends LinearOpMode {
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
     public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
 
-    private PIDController controller;
+    private int RightArmUpPos = 150;
+    private int LeftArmUpPos = 150;
 
-    public static double p = 0.0154, i = 0.001, d=0.0028;
-    public static double f = 0.3;
 
-    public static int target = 0;
 
     private final double ticks_in_degrees = 22.5;
 
@@ -54,9 +63,12 @@ public class BlueLeft extends LinearOpMode {
 
     private DcMotorEx lift_right;
 
+    private Servo right_intake;
     private Servo left_intake;
 
-    private Servo right_intake;
+    private Servo Basket;
+
+
 
 
     @Override
@@ -64,19 +76,16 @@ public class BlueLeft extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        Basket = hardwareMap.get(Servo.class, "basket");
 
-        controller = new PIDController(p, i, d);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        lift_left = hardwareMap.get(DcMotorEx.class, "lift_left");
-        lift_right = hardwareMap.get(DcMotorEx.class, "lift_right");
 
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
 
-        right_intake.setDirection(Servo.Direction.REVERSE);
 
-        lift_left.setDirection(DcMotorEx.Direction.REVERSE);
+        lift_left = hardwareMap.get(DcMotorEx.class, "lift_left");
+        lift_right = hardwareMap.get(DcMotorEx.class, "lift_right");
+
 
 
 
@@ -86,59 +95,102 @@ public class BlueLeft extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .strafeLeft(-12)
+                .strafeLeft(-11)
                 .build();
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .forward(-21)
                 .build();
         Trajectory traj2Next = drive.trajectoryBuilder(traj2.end())
-                .back(-21)
+                .back(-8)
                 .build();
-        Trajectory traj2Next2 = drive.trajectoryBuilder(traj2Next.end())
-                .strafeLeft(-29)
+        Trajectory traj2Next2 = drive.trajectoryBuilder(traj2Next.end().plus(new Pose2d(0,0,Math.toRadians(90))))
+                .forward(-24)
                 .build();
-
-
+        Trajectory GOtoBACKDROP = drive.trajectoryBuilder(traj2Next2.end())
+                .strafeRight(-10)
+                .build();
+        Trajectory GOtoBACKDROP2 = drive.trajectoryBuilder(GOtoBACKDROP.end())
+                .forward(-3.5)
+                .build();
+        Trajectory GOBACK = drive.trajectoryBuilder(GOtoBACKDROP2.end())
+                .back(-4)
+                .build();
+        Trajectory traj2Next3 = drive.trajectoryBuilder(GOBACK.end())
+                .strafeLeft(-21)
+                .build();
+        Trajectory traj2Next4 = drive. trajectoryBuilder(traj2Next3.end())
+                .forward(-6)
+                .build();
 
         //
 
-        Trajectory traj4 = drive.trajectoryBuilder(startPose)
-                .forward(-30)
+        Trajectory traj3 = drive.trajectoryBuilder(startPose)
+                .strafeLeft(-6)
+                .build();
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .forward(-35)
                 .build();
         Trajectory traj4Next = drive.trajectoryBuilder(traj4.end())
-                .back(-6)
+                .back(-11)
                 .build();
         Trajectory traj4Next2 = drive.trajectoryBuilder(traj4Next.end().plus(new Pose2d(0,0, Math.toRadians(90))))
-                .forward(-24)
+                .forward(-29)
+                .build();
+        Trajectory trajStrafe = drive.trajectoryBuilder(traj4Next2.end())
+                .strafeRight(-3)
+                .build();
+        Trajectory FWmore = drive.trajectoryBuilder(trajStrafe.end())
+                .forward(-2)
                 .build();
         Trajectory traj4Next3 = drive.trajectoryBuilder(traj4Next2.end())
                 .strafeLeft(-24)
                 .build();
         Trajectory traj4Next4 = drive.trajectoryBuilder(traj4Next3.end())
-                .forward(-16)
+                .forward(-10)
                 .build();
 
 
-        Trajectory RightPlaceLeft = drive.trajectoryBuilder(startPose)
-                .strafeLeft(-6)
-                .build();
 
-        Trajectory traj5 = drive.trajectoryBuilder(RightPlaceLeft.end())
-                .forward(-24)
+        Trajectory traj5 = drive.trajectoryBuilder(startPose)
+                .forward(-28)
                 .build();
         Trajectory traj6 = drive.trajectoryBuilder(traj5.end().plus(new Pose2d(0,0, Math.toRadians(-90))))
-                .forward(-9)
+                .forward(-4)
                 .build();
         Trajectory traj6Next2 = drive.trajectoryBuilder(traj6.end())
-                .back(-39)
-                .build();
-        Trajectory traj6Next3 = drive.trajectoryBuilder(traj6Next2.end())
-                .strafeRight(-23)
+                .back(-36)
                 .build();
 
-        Trajectory traj6Next5 = drive.trajectoryBuilder(traj6Next3.end())
-                .forward(8)
+        Trajectory TRaj69 = drive.trajectoryBuilder(traj6Next2.end().plus(new Pose2d(0,0, Math.toRadians(180))))
+                .strafeRight(-12)
                 .build();
+        Trajectory trajfw2 = drive.trajectoryBuilder(TRaj69.end())
+                .forward(-7)
+                .build();
+        Trajectory back3 = drive.trajectoryBuilder(trajfw2.end())
+                .back(-7)
+                .build();
+        Trajectory traj6Next4 = drive.trajectoryBuilder(back3.end())
+                .strafeLeft(-30)
+                .build();
+        Trajectory traj6Next5 = drive.trajectoryBuilder(traj6Next4.end())
+                .forward(-8)
+                .build();
+
+        lift_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lift_left.setTargetPosition(0);
+        lift_right.setTargetPosition(0);
+
+        lift_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        lift_left.setPower(0);
+        lift_right.setPower(0);
+
+
+
 
 
 
@@ -150,52 +202,141 @@ public class BlueLeft extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
         //int target = 100;
 
-
+        sleep(5000);
+        getLocationOfProp();
 
 
         waitForStart();
 
-        getLocationOfProp();
-        sleep(3000);
+
+
+
+
+
+
+        //lift the arm
+        //drop servo
+
+
+
+
 
         if (locationOfProp == 1) {
             drive.followTrajectory(traj1);
             drive.followTrajectory(traj2);
             drive.followTrajectory(traj2Next);
+            drive.turn(Math.toRadians(90));
             drive.followTrajectory(traj2Next2);
+            drive.followTrajectory(GOtoBACKDROP);
 
+
+            lift_left.setTargetPosition(135);
+            lift_right.setTargetPosition(135);
+
+
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
+
+            drive.followTrajectory(GOtoBACKDROP2);
+            sleep(5000);
+
+            sleep(1000);
+            openBasket();
+            sleep(2000);
+            drive.followTrajectory(GOBACK);
+            closeBasket();
+
+            lift_left.setTargetPosition(0);
+            lift_right.setTargetPosition(0);
+
+
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
+
+            sleep(2000);
+
+            drive.followTrajectory(traj2Next3);
+            drive.followTrajectory(traj2Next4);
 
         }
         if (locationOfProp == 2) {
+            drive.followTrajectory(traj3);
             drive.followTrajectory(traj4);
             drive.followTrajectory(traj4Next);
+            drive.turn(Math.toRadians(90));
             drive.followTrajectory(traj4Next2);
+            drive.followTrajectory(trajStrafe);
+            sleep(1000);
+
+            lift_left.setTargetPosition(135);
+            lift_right.setTargetPosition(135);
+
+
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
+
+            sleep(5000);
+
+            drive.followTrajectory(FWmore);
+
+            openBasket();
+
+            sleep(2000);
+
+            lift_left.setTargetPosition(0);
+            lift_right.setTargetPosition(0);
+
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
+
+            sleep(3000);
+            closeBasket();
             drive.followTrajectory(traj4Next3);
-            drive.followTrajectory(traj4Next4);
+            drive.followTrajectory(traj2Next4);
 
         }
         if (locationOfProp == 3) {
-            drive.followTrajectory(RightPlaceLeft);
             drive.followTrajectory(traj5);
             drive.turn(Math.toRadians(-90));
             drive.followTrajectory(traj6);
             drive.followTrajectory(traj6Next2);
-            drive.followTrajectory(traj6Next3);
+            drive.turn(Math.toRadians(180));
+            drive.followTrajectory(TRaj69);
+
+            lift_left.setTargetPosition(135);
+            lift_right.setTargetPosition(135);
+
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
+
+            sleep(5000);
+
+            drive.followTrajectory(trajfw2);
+
+            openBasket();
+
+            sleep(2000);
+
+            drive.followTrajectory(back3);
+
+            lift_left.setTargetPosition(0);
+            lift_right.setTargetPosition(0);
+
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
+
+            sleep(1000);
+
+            closeBasket();
+
+            drive.followTrajectory(traj6Next4);
             drive.followTrajectory(traj6Next5);
 
         }
 
 
         while (opModeIsActive()) {
-            controller.setPID(p, i, d);
-            int armPos = lift_right.getCurrentPosition();
-            double pid = controller.calculate(armPos, target);
-            double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
-            double power = pid + ff;
-
-            lift_right.setPower(power);
-            lift_left.setPower(power);
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
             telemetry.addData("Distance in Inch", (getDistance(width)));
             telemetry.addData("Location of Prop", locationOfProp);
@@ -317,7 +458,28 @@ public class BlueLeft extends LinearOpMode {
         if (cX>800) {
             locationOfProp=3;
         }
+
+
     }
 
+    private void openBasket()
+    {
+        Basket.setPosition(0.5);
+    }
+
+    private void closeBasket()
+    {
+        Basket.setPosition(0.1);
+    }
+    private void intakeDown()
+    {
+        left_intake.setPosition(0.5);
+        right_intake.setPosition(0.5);
+    }
+
+    private void intakeUp() {
+        left_intake.setPosition(0.7);
+        right_intake.setPosition(0.7);
+    }
 
 }

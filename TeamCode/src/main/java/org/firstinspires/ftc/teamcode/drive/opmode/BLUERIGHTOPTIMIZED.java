@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -25,9 +24,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "RedLeftOptimized")
+@Autonomous(name = "BlueRightOptimized")
 
-public class REDLEFTOPTIMIZED extends LinearOpMode {
+public class BLUERIGHTOPTIMIZED extends LinearOpMode {
 
     double locationOfProp = 0;
 
@@ -53,37 +52,34 @@ public class REDLEFTOPTIMIZED extends LinearOpMode {
 
     //private final double ticks_in_degrees = 0;
     private final double ticks_in_degrees = 22.4;
-    private DcMotorEx lift_motor_left;
-    private DcMotorEx lift_motor_right;
+    private DcMotorEx lift_right;
+    private DcMotorEx lift_left;
 
 
     private Servo left_intake;
 
     private Servo right_intake;
 
-    private Servo right_claw;
-
-    private Servo left_claw;
-
     private Servo basket;
+
+
     @Override
     public void runOpMode() {
 
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
-        lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
+        lift_right = hardwareMap.get(DcMotorEx.class, "lift_right");
+        lift_left = hardwareMap.get(DcMotorEx.class, "lift_left");
 
         left_intake = hardwareMap.get(Servo.class, "left_intake");
         right_intake = hardwareMap.get(Servo.class, "right_intake");
 
         basket = hardwareMap.get(Servo.class, "basket");
 
+        lift_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        lift_motor_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        lift_motor_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 //        right_claw = hardwareMap.get(Servo.class, "right claw");
 //        left_claw = hardwareMap.get(Servo.class, "left claw");
@@ -91,73 +87,62 @@ public class REDLEFTOPTIMIZED extends LinearOpMode {
 //        right_intake.setDirection(Servo.Direction.REVERSE);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-35,-61, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(-35,61, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
-        // Postion 1 - traj1StrafeLeft, Traj1
-//        Trajectory traj1StrafeLeft = drive.trajectoryBuilder(startPose)
-//
-//                .strafeLeft(-13)
-//                .build();
+        //postion 1
 
-        Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .splineToConstantHeading(new Vector2d(-48,-38), Math.toRadians(270))
+        Trajectory traj1StrafeRight = drive.trajectoryBuilder(startPose)
+                .strafeRight(-13)
+                .build();
+
+        Trajectory traj1 = drive.trajectoryBuilder(traj1StrafeRight.end())
+                .forward(-18)
                 .build();
 
         Trajectory back = drive.trajectoryBuilder(traj1.end())
                 .back(-6)
                 .build();
 
-        Trajectory right1 = drive.trajectoryBuilder(back.end())//splineto(-65-31)
-                .strafeRight(14)
+        Trajectory right1 = drive.trajectoryBuilder(back.end())
+                .strafeRight(-13)
                 .build();
 
         Trajectory right2 = drive.trajectoryBuilder(right1.end())
-                .forward(-20)
+                .back(40)
                 .build();
 
-        Trajectory right3 = drive.trajectoryBuilder(right2.end().plus(new Pose2d(0,0,Math.toRadians(-93))))
-                .strafeRight(17)
+        Trajectory right3 = drive.trajectoryBuilder(right2.end().plus(new Pose2d(0,0,Math.toRadians(90))))
+                .forward(-100)
                 .build();
 
-        Trajectory right31 = drive.trajectoryBuilder(right3.end())
-                .forward(-108)
+        Trajectory right4 = drive.trajectoryBuilder(right3.end())
+                .strafeRight(25)
                 .build();
-
-        Trajectory right4 = drive.trajectoryBuilder(right31.end())
-                .strafeLeft(28)
-                .build();
-
         Trajectory right5 = drive.trajectoryBuilder(right4.end())
-                .forward(-6.5)
+                .forward(-10)
                 .build();
 
         Trajectory right6 = drive.trajectoryBuilder(right5.end())
                 .forward(5)
                 .build();
 
-        Trajectory right7 = drive.trajectoryBuilder(right6.end())
-                .strafeRight(5)
-                .build();
-
-
-
 
         //Postion 2 - Traj2
         Trajectory traj2 = drive.trajectoryBuilder(startPose)
-                .forward(-32.9)
+                .forward(-34)
                 .build();
 
         Trajectory back1 = drive.trajectoryBuilder(traj2.end())
                 .back(-8)
                 .build();
 
-        Trajectory mid1 = drive.trajectoryBuilder(back1.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
+        Trajectory mid1 = drive.trajectoryBuilder(back1.end().plus(new Pose2d(0,0,Math.toRadians(90))))
                 .forward(20)
                 .build();
 
         Trajectory mid2 = drive.trajectoryBuilder(mid1.end())
-                .strafeRight(31)
+                .strafeLeft(30)
                 .build();
 
         Trajectory mid3 = drive.trajectoryBuilder(mid2.end())
@@ -165,63 +150,59 @@ public class REDLEFTOPTIMIZED extends LinearOpMode {
                 .build();
 
         Trajectory mid4 = drive.trajectoryBuilder(mid3.end())
-                .strafeLeft(31)
+                .strafeLeft(-27)
                 .build();
 
         Trajectory mid5 = drive.trajectoryBuilder(mid4.end())
-                .back(10)
+                .forward(-8.5)
                 .build();
 
         Trajectory mid6 = drive.trajectoryBuilder(mid5.end())
-                .back(-5)
+                .forward(5)
                 .build();
 
-        Trajectory mid7 =drive.trajectoryBuilder(mid6.end())
-                .strafeRight(5)
-                .build();
+
+
+
 
         //Position 3 - traj3StrafeLeft ,traj3 ,traj4
-        Trajectory traj3StrafeLeft = drive.trajectoryBuilder(startPose)
-                .strafeLeft(-12)
+        Trajectory traj3StrafeRight = drive.trajectoryBuilder(startPose)
+                .strafeRight(-12)
                 .build();
 
-        Trajectory traj3 = drive.trajectoryBuilder(traj3StrafeLeft.end())
+        Trajectory traj3 = drive.trajectoryBuilder(traj3StrafeRight.end())
                 .forward(-28)
                 .build();
 
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
-                .forward(-15.8)
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end().plus(new Pose2d(0,0,Math.toRadians(90))))
+                .forward(-16)
                 .build();
+
+
 
         Trajectory back2 = drive.trajectoryBuilder(traj4.end())
                 .back(-6)
                 .build();
 
         Trajectory left1 = drive.trajectoryBuilder(back2.end())
-                        .strafeRight(25)
+                        .strafeLeft(30)
                                 .build();
 
         Trajectory left2 = drive.trajectoryBuilder(left1.end())
-                        .back(80)
+                        .back(75)
                                 .build();
 
         Trajectory left3 = drive.trajectoryBuilder(left2.end())
-                        .strafeLeft(36)
+                        .strafeRight(36)
                                 .build();
 
         Trajectory left4 = drive.trajectoryBuilder(left3.end())
-                        .forward(-8.5)
+                        .back(16)
                                 .build();
 
         Trajectory left5 = drive.trajectoryBuilder(left4.end())
-                        .forward(5)
-                                .build();
-
-        Trajectory left6 = drive.trajectoryBuilder(left5.end())
-                        .strafeRight(10)
-                                .build();
-
-
+                .back(-8)
+                        .build();
 
 
 
@@ -234,152 +215,122 @@ public class REDLEFTOPTIMIZED extends LinearOpMode {
 //        right_claw.setPosition(1);
 //        left_claw.setPosition(1);
 
-
-
         waitForStart();
 
         getLocationOfProp();
-        sleep(1000);
+        sleep(3000);
 
-        if (locationOfProp == 1) {
+
+//        while (opModeIsActive()) {
+//            controller.setPID(p, i, d);
+//            int armPos = lift_left.getCurrentPosition();
+//            double pid = controller.calculate(armPos, target);
+//            double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+//
+//            double power = pid + ff;
+//
+//            lift_left.setPower(power);
+//            lift_right.setPower(power);
+//            telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
+//            telemetry.addData("Distance in Inch", (getDistance(width)));
+//            telemetry.addData("Location of Prop", locationOfProp);
+//            telemetry.update();
+//
+//            // The OpenCV pipeline automatically processes frames and handles detection
+//        }
+
+//        left_claw.setPosition(1);
+//        right_claw.setPosition(1);
+
+
+        if (locationOfProp == 3) {
+            drive.followTrajectory(traj1StrafeRight);
             drive.followTrajectory(traj1);
             drive.followTrajectory(back);
             drive.followTrajectory(right1);
-
-//            lift_motor_left.setTargetPosition(105);
-//            lift_motor_right.setTargetPosition(105);
-//
-//            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//            lift_motor_right.setPower(0.7);
-//            lift_motor_left.setPower(0.7);
-//
-//            sleep(3000);
-//
-//            left_intake.setPosition(1);
-//            right_intake.setPosition(1);
-//
-//            sleep(1000);
-//
-//            lift_motor_left.setTargetPosition(0);
-//            lift_motor_right.setTargetPosition(0);
-//
-//
-//            lift_motor_right.setPower(0.7);
-//            lift_motor_left.setPower(0.7);
-
             drive.followTrajectory(right2);
-
-            drive.turn(Math.toRadians(-93));
-
+            drive.turn(Math.toRadians(90));
             drive.followTrajectory(right3);
-
-            drive.followTrajectory(right31);
             drive.followTrajectory(right4);
 
-            lift_motor_left.setTargetPosition(150);
-            lift_motor_right.setTargetPosition(150);
-
-            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
+            lift_left.setTargetPosition(140);
+            lift_right.setTargetPosition(140);
+            lift_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
+            sleep(1000);
 
             drive.followTrajectory(right5);
-
-            sleep(3000);
-
+            sleep(1000);
             basket.setPosition(0.5);
-
             sleep(3000);
-
             drive.followTrajectory(right6);
+            lift_left.setTargetPosition(0);
+            lift_right.setTargetPosition(0);
+
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
             basket.setPosition(0);
-            lift_motor_left.setTargetPosition(0);
-            lift_motor_right.setTargetPosition(0);
-
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-
-            drive.followTrajectory(right7);
-
         }
         if (locationOfProp == 2) {
             drive.followTrajectory(traj2);
             drive.followTrajectory(back1);
-            drive.turn(Math.toRadians(-90));
+            drive.turn(Math.toRadians(90));
             drive.followTrajectory(mid1);
             drive.followTrajectory(mid2);
             drive.followTrajectory(mid3);
+            lift_left.setTargetPosition(140);
+            lift_right.setTargetPosition(140);
+            lift_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
             drive.followTrajectory(mid4);
-
-            lift_motor_left.setTargetPosition(120);
-            lift_motor_right.setTargetPosition(120);
-
-            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-            sleep(3000);
-
             drive.followTrajectory(mid5);
-            sleep(3000);
+            sleep(2000);
             basket.setPosition(0.5);
-            sleep(3000);
+            sleep(2000);
             drive.followTrajectory(mid6);
             basket.setPosition(0);
-            lift_motor_left.setTargetPosition(0);
-            lift_motor_right.setTargetPosition(0);
+            lift_left.setTargetPosition(0);
+            lift_right.setTargetPosition(0);
 
-
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-            drive.followTrajectory(mid7);
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
 
 
         }
-        if (locationOfProp == 3) {
-            drive.followTrajectory(traj3StrafeLeft);
+        if (locationOfProp == 1) {
+            drive.followTrajectory(traj3StrafeRight);
             drive.followTrajectory(traj3);
-            drive.turn(Math.toRadians(-90));
+            drive.turn(Math.toRadians(90));
             drive.followTrajectory(traj4);
             drive.followTrajectory(back2);
             drive.followTrajectory(left1);
             drive.followTrajectory(left2);
             drive.followTrajectory(left3);
-            lift_motor_left.setTargetPosition(150);
-            lift_motor_right.setTargetPosition(150);
-
-            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-            sleep(2000);
-
+            lift_left.setTargetPosition(135);
+            lift_right.setTargetPosition(135);
+            lift_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
             drive.followTrajectory(left4);
             sleep(2000);
             basket.setPosition(0.5);
             sleep(2000);
-
             drive.followTrajectory(left5);
+
             basket.setPosition(0);
-            lift_motor_left.setTargetPosition(0);
-            lift_motor_right.setTargetPosition(0);
+
+            lift_left.setTargetPosition(0);
+            lift_right.setTargetPosition(0);
+
+            lift_left.setPower(0.7);
+            lift_right.setPower(0.7);
 
 
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-            drive.followTrajectory(left6);
         }
 
         // Release resources
@@ -446,8 +397,8 @@ public class REDLEFTOPTIMIZED extends LinearOpMode {
             Mat hsvFrame = new Mat();
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
-            Scalar lowerYellow = new Scalar(100, 100, 100);
-            Scalar upperYellow = new Scalar(180, 255, 255);
+            Scalar lowerYellow = new Scalar(10, 100, 100);
+            Scalar upperYellow = new Scalar(50, 255, 255);
 
 
             Mat yellowMask = new Mat();
@@ -499,4 +450,3 @@ public class REDLEFTOPTIMIZED extends LinearOpMode {
 
 
 }
-

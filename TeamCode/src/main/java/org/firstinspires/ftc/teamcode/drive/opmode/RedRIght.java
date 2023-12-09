@@ -56,6 +56,8 @@ public class RedRIght extends LinearOpMode {
 
     public static int highV = 255;
 
+    private Servo armangle;
+
     private Servo basket;
 
 
@@ -66,6 +68,8 @@ public class RedRIght extends LinearOpMode {
 
         DcMotorEx lift_motor_left = hardwareMap.get(DcMotorEx.class, "lift_left");
         DcMotorEx lift_motor_right = hardwareMap.get(DcMotorEx.class, "lift_right");
+        armangle = hardwareMap.get(Servo.class, "ArmAngleServo");
+
 
         Servo left_intake = hardwareMap.get(Servo.class, "left_intake");
         Servo right_intake = hardwareMap.get(Servo.class, "right_intake");
@@ -119,7 +123,7 @@ public class RedRIght extends LinearOpMode {
                 .build();
 
         Trajectory left5 = drive.trajectoryBuilder(left42.end())
-                .strafeRight(5)
+                .strafeRight(-12)
                 .build();
 
         Trajectory left6 = drive.trajectoryBuilder(left5.end())
@@ -142,7 +146,7 @@ public class RedRIght extends LinearOpMode {
 
 
         Trajectory mid315 = drive.trajectoryBuilder(mid3.end())
-                .strafeRight(4)
+                .strafeRight(2)
                 .build();
 
         Trajectory mid31 = drive.trajectoryBuilder(mid315.end())
@@ -158,7 +162,7 @@ public class RedRIght extends LinearOpMode {
                 .build();
 
         Trajectory mid4 = drive.trajectoryBuilder(mid32.end())
-                .strafeRight(6)
+                .strafeRight(-12)
                 .build();
 
 //        Trajectory mid5 = drive.trajectoryBuilder(mid4.end())
@@ -194,7 +198,7 @@ public class RedRIght extends LinearOpMode {
                 .build();
 
         Trajectory right407 = drive.trajectoryBuilder(right405.end())
-                .back(6)
+                .back(7.5)
                 .build();
 
         Trajectory right41 = drive.trajectoryBuilder(right407.end())
@@ -202,7 +206,7 @@ public class RedRIght extends LinearOpMode {
                 .build();
 
         Trajectory right5 = drive.trajectoryBuilder(right41.end())
-                .strafeRight(6)
+                .strafeRight(-12)
                         .build();
 
 //        Trajectory right6 = drive.trajectoryBuilder(right5.end())
@@ -320,8 +324,8 @@ public class RedRIght extends LinearOpMode {
             drive.followTrajectory(mid315);
 
 
-            lift_motor_left.setTargetPosition(105);
-            lift_motor_right.setTargetPosition(105);
+            lift_motor_left.setTargetPosition(125);
+            lift_motor_right.setTargetPosition(125);
 
             lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -333,6 +337,7 @@ public class RedRIght extends LinearOpMode {
 
 
             drive.followTrajectory(mid31);
+
 
 
             basket.setPosition(0.5);
@@ -361,8 +366,8 @@ public class RedRIght extends LinearOpMode {
             drive.followTrajectory(right3);
             drive.turn(Math.toRadians(-90));
 
-            lift_motor_left.setTargetPosition(105);
-            lift_motor_right.setTargetPosition(105);
+            lift_motor_left.setTargetPosition(125);
+            lift_motor_right.setTargetPosition(125);
 
             lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
