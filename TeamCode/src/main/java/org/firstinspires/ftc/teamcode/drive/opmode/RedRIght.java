@@ -133,7 +133,7 @@ public class RedRIght extends LinearOpMode {
 
 
         Trajectory mid1 = drive.trajectoryBuilder(startPose)
-                        .forward(-33.9)
+                        .forward(-31.5)
                                 .build();
         Trajectory mid2 = drive.trajectoryBuilder(mid1.end())
                         .back(-10)
@@ -150,7 +150,7 @@ public class RedRIght extends LinearOpMode {
                 .build();
 
         Trajectory mid31 = drive.trajectoryBuilder(mid315.end())
-                .forward(-9)
+                .forward(-11)
                 .build();
 
 //        Trajectory mid305 = drive.trajectoryBuilder(mid31.end())
@@ -162,7 +162,7 @@ public class RedRIght extends LinearOpMode {
                 .build();
 
         Trajectory mid4 = drive.trajectoryBuilder(mid32.end())
-                .strafeRight(-12)
+                .strafeRight(-20)
                 .build();
 
 //        Trajectory mid5 = drive.trajectoryBuilder(mid4.end())
@@ -206,7 +206,7 @@ public class RedRIght extends LinearOpMode {
                 .build();
 
         Trajectory right5 = drive.trajectoryBuilder(right41.end())
-                .strafeRight(-12)
+                .strafeRight(-20)
                         .build();
 
 //        Trajectory right6 = drive.trajectoryBuilder(right5.end())
@@ -242,7 +242,7 @@ public class RedRIght extends LinearOpMode {
         waitForStart();
 
         getLocationOfProp();
-        sleep(3000);
+        sleep(1000);
 
 
         if (locationOfProp == 1) {
@@ -383,11 +383,15 @@ public class RedRIght extends LinearOpMode {
 
             drive.followTrajectory(right407);
 
+            armangle.setPosition(0.65);
+
             sleep(1000);
             basket.setPosition(0.5);
             sleep(2000);
 
             drive.followTrajectory(right41);
+
+            armangle.setPosition(0.5);
 
 
             basket.setPosition(0);

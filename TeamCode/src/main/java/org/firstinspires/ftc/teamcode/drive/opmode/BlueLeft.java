@@ -107,10 +107,10 @@ public class BlueLeft extends LinearOpMode {
                 .forward(-24)
                 .build();
         Trajectory GOtoBACKDROP = drive.trajectoryBuilder(traj2Next2.end())
-                .strafeRight(-10)
+                .strafeRight(-6)
                 .build();
         Trajectory GOtoBACKDROP2 = drive.trajectoryBuilder(GOtoBACKDROP.end())
-                .forward(-3.5)
+                .forward(-8.5)
                 .build();
         Trajectory GOBACK = drive.trajectoryBuilder(GOtoBACKDROP2.end())
                 .back(-4)
@@ -125,10 +125,10 @@ public class BlueLeft extends LinearOpMode {
         //
 
         Trajectory traj3 = drive.trajectoryBuilder(startPose)
-                .strafeLeft(-6)
+                .strafeLeft(-4)
                 .build();
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .forward(-35)
+                .forward(-31)
                 .build();
         Trajectory traj4Next = drive.trajectoryBuilder(traj4.end())
                 .back(-11)
@@ -137,10 +137,10 @@ public class BlueLeft extends LinearOpMode {
                 .forward(-29)
                 .build();
         Trajectory trajStrafe = drive.trajectoryBuilder(traj4Next2.end())
-                .strafeRight(-3)
+                .strafeRight(-2)
                 .build();
         Trajectory FWmore = drive.trajectoryBuilder(trajStrafe.end())
-                .forward(-2)
+                .forward(-10)
                 .build();
         Trajectory traj4Next3 = drive.trajectoryBuilder(traj4Next2.end())
                 .strafeLeft(-24)
@@ -160,21 +160,20 @@ public class BlueLeft extends LinearOpMode {
         Trajectory traj6Next2 = drive.trajectoryBuilder(traj6.end())
                 .back(-36)
                 .build();
-
         Trajectory TRaj69 = drive.trajectoryBuilder(traj6Next2.end().plus(new Pose2d(0,0, Math.toRadians(180))))
-                .strafeRight(-12)
+                .strafeRight(-110)
                 .build();
         Trajectory trajfw2 = drive.trajectoryBuilder(TRaj69.end())
-                .forward(-7)
+                .forward(-13)
                 .build();
         Trajectory back3 = drive.trajectoryBuilder(trajfw2.end())
                 .back(-7)
                 .build();
         Trajectory traj6Next4 = drive.trajectoryBuilder(back3.end())
-                .strafeLeft(-30)
+                .strafeLeft(-35)
                 .build();
         Trajectory traj6Next5 = drive.trajectoryBuilder(traj6Next4.end())
-                .forward(-8)
+                .forward(-13)
                 .build();
 
         lift_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -203,10 +202,12 @@ public class BlueLeft extends LinearOpMode {
         //int target = 100;
 
         sleep(5000);
-        getLocationOfProp();
+
 
 
         waitForStart();
+
+        getLocationOfProp();
 
 
 
@@ -237,14 +238,18 @@ public class BlueLeft extends LinearOpMode {
             lift_left.setPower(0.7);
             lift_right.setPower(0.7);
 
-            drive.followTrajectory(GOtoBACKDROP2);
+
             sleep(5000);
+
+            drive.followTrajectory(GOtoBACKDROP2);
 
             sleep(1000);
             openBasket();
             sleep(2000);
             drive.followTrajectory(GOBACK);
             closeBasket();
+
+            sleep(1000);
 
             lift_left.setTargetPosition(0);
             lift_right.setTargetPosition(0);

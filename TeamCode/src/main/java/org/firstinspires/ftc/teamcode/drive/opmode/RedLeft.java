@@ -192,65 +192,65 @@ public class RedLeft extends LinearOpMode {
             drive.followTrajectory(traj1StrafeLeft);
             drive.followTrajectory(traj1);
             drive.followTrajectory(back);
-            drive.followTrajectory(right1);
-
-            lift_motor_left.setTargetPosition(105);
-            lift_motor_right.setTargetPosition(105);
-
-            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-
-            sleep(3000);
-
-            left_intake.setPosition(0.7);
-            right_intake.setPosition(0.7);
-
-            sleep(1000);
-
-            lift_motor_left.setTargetPosition(0);
-            lift_motor_right.setTargetPosition(0);
-
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-
-            drive.followTrajectory(right2);
-
-            drive.turn(Math.toRadians(-93));
-
-            drive.followTrajectory(right3);
-
-            drive.followTrajectory(right31);
-            drive.followTrajectory(right4);
-
-            lift_motor_left.setTargetPosition(150);
-            lift_motor_right.setTargetPosition(150);
-
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-
-            drive.followTrajectory(right5);
-
-            sleep(3000);
-
-            basket.setPosition(0.5);
-
-            sleep(3000);
-
-            drive.followTrajectory(right6);
-            basket.setPosition(0);
-            lift_motor_left.setTargetPosition(0);
-            lift_motor_right.setTargetPosition(0);
-
-
-            lift_motor_right.setPower(0.7);
-            lift_motor_left.setPower(0.7);
-
-            drive.followTrajectory(right7);
+//            drive.followTrajectory(right1);
+//
+//            lift_motor_left.setTargetPosition(105);
+//            lift_motor_right.setTargetPosition(105);
+//
+//            lift_motor_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            lift_motor_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//            lift_motor_right.setPower(0.7);
+//            lift_motor_left.setPower(0.7);
+//
+//            sleep(3000);
+//
+//            left_intake.setPosition(0.7);
+//            right_intake.setPosition(0.7);
+//
+//            sleep(1000);
+//
+//            lift_motor_left.setTargetPosition(0);
+//            lift_motor_right.setTargetPosition(0);
+//
+//
+//            lift_motor_right.setPower(0.7);
+//            lift_motor_left.setPower(0.7);
+//
+//            drive.followTrajectory(right2);
+//
+//            drive.turn(Math.toRadians(-93));
+//
+//            drive.followTrajectory(right3);
+//
+//            drive.followTrajectory(right31);
+//            drive.followTrajectory(right4);
+//
+//            lift_motor_left.setTargetPosition(150);
+//            lift_motor_right.setTargetPosition(150);
+//
+//
+//            lift_motor_right.setPower(0.7);
+//            lift_motor_left.setPower(0.7);
+//
+//            drive.followTrajectory(right5);
+//
+//            sleep(3000);
+//
+//            basket.setPosition(0.5);
+//
+//            sleep(3000);
+//
+//            drive.followTrajectory(right6);
+//            basket.setPosition(0);
+//            lift_motor_left.setTargetPosition(0);
+//            lift_motor_right.setTargetPosition(0);
+//
+//
+//            lift_motor_right.setPower(0.7);
+//            lift_motor_left.setPower(0.7);
+//
+//            drive.followTrajectory(right7);
 
         }
         if (locationOfProp == 2) {
