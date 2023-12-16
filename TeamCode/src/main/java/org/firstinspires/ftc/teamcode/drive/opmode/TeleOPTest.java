@@ -187,7 +187,9 @@ public class TeleOPTest extends OpMode {
 
         if (gamepad2.a) {
             lift_up();
+            armangle.setPosition(1);
         }else if (gamepad2.y) {
+            armangle.setPosition(0.5);
             basket.setPosition(0);
 //            left_claw.setPosition(0.1);
 //            right_claw.setPosition(0.1);

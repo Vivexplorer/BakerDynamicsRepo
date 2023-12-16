@@ -161,7 +161,7 @@ public class BlueLeft extends LinearOpMode {
                 .back(-36)
                 .build();
         Trajectory TRaj69 = drive.trajectoryBuilder(traj6Next2.end().plus(new Pose2d(0,0, Math.toRadians(180))))
-                .strafeRight(-110)
+                .strafeRight(-11)
                 .build();
         Trajectory trajfw2 = drive.trajectoryBuilder(TRaj69.end())
                 .forward(-13)
